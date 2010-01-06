@@ -3,15 +3,17 @@ This is a drop-in replacement for the find module currently in the standard
 library. It is modeled on a typical 'find' command found on most Unix systems.
 
 = Synopsis
-   rule = File::Find.new(
-      :pattern => "*.rb",
-      :follow  => false,
-      :path    => ['/usr/local/lib', '/opt/local/lib']
-   )
+  require 'file/find'
 
-   rule.find{ |f|
-      puts f
-   }
+  rule = File::Find.new(
+    :pattern => "*.rb",
+    :follow  => false,
+    :path    => ['/usr/local/lib', '/opt/local/lib']
+  )
+
+  rule.find{ |f|
+    puts f
+  }
 
 = Installation
 * rake test (optional)
@@ -102,7 +104,7 @@ http://www.rubyforge.org/projects/shards.
 Artistic 2.0
 
 = Copyright
-(C) 2007-2009, Daniel J. Berger, All Rights Reserved
+(C) 2007-2010, Daniel J. Berger, All Rights Reserved
 
 = Author
 Daniel J. Berger
