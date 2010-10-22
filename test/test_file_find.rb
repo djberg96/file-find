@@ -22,50 +22,50 @@ include Config
 include FileUtils
 
 class TC_File_Find < Test::Unit::TestCase
-   def self.startup
-      Dir.chdir(File.dirname(File.expand_path(__FILE__)))
+  def self.startup
+    Dir.chdir(File.dirname(File.expand_path(__FILE__)))
 
-      @@windows = CONFIG['host_os'] =~ /windows|mswin/i
-      @@jruby   = RUBY_PLATFORM.match('java')
+    @@windows = CONFIG['host_os'] =~ /win32|mswin|msdos|cygwin|mingw/i
+    @@jruby   = RUBY_PLATFORM.match('java')
 
-      unless @@windows
-         if @@jruby
-            @@loguser = Etc.getpwnam(Etc.getlogin)
-            @@logroup = Etc.getgrgid(@@loguser.gid)
-         else
-            @@loguser = Sys::Admin.get_user(Sys::Admin.get_login)
-            @@logroup = Sys::Admin.get_group(@@loguser.gid)
-         end
+    unless @@windows
+      if @@jruby
+        @@loguser = Etc.getpwnam(Etc.getlogin)
+        @@logroup = Etc.getgrgid(@@loguser.gid)
+      else
+        @@loguser = Sys::Admin.get_user(Sys::Admin.get_login)
+        @@logroup = Sys::Admin.get_group(@@loguser.gid)
       end
-   end
+    end
+  end
 
-   def setup
-      @file_rb    = 'test1.rb'
-      @file_txt1  = 'test1.txt'
-      @file_txt2  = 'foo.txt'
-      @file_doc   = 'foo.doc'
-      @directory1 = 'dir1'
-      @directory2 = 'dir2'
+  def setup
+    @file_rb    = 'test1.rb'
+    @file_txt1  = 'test1.txt'
+    @file_txt2  = 'foo.txt'
+    @file_doc   = 'foo.doc'
+    @directory1 = 'dir1'
+    @directory2 = 'dir2'
 
-      File.open(@file_rb, 'w'){}
-      File.open(@file_txt1, 'w'){}
-      File.open(@file_txt2, 'w'){}
-      File.open(@file_doc, 'w'){}
+    File.open(@file_rb, 'w'){}
+    File.open(@file_txt1, 'w'){}
+    File.open(@file_txt2, 'w'){}
+    File.open(@file_doc, 'w'){}
 
-      unless @@windows
-         @link1 = 'link1'
-         File.symlink(@file_rb, @link1)
-      end
+    unless @@windows
+      @link1 = 'link1'
+      File.symlink(@file_rb, @link1)
+    end
 
-      Dir.mkdir(@directory1) unless File.exists?(@directory1)
-      Dir.mkdir(@directory2) unless File.exists?(@directory2)
+    Dir.mkdir(@directory1) unless File.exists?(@directory1)
+    Dir.mkdir(@directory2) unless File.exists?(@directory2)
 
-      File.open(File.join(@directory1, 'bar.txt'), 'w'){}
-      File.open(File.join(@directory2, 'baz.txt'), 'w'){}
+    File.open(File.join(@directory1, 'bar.txt'), 'w'){}
+    File.open(File.join(@directory2, 'baz.txt'), 'w'){}
 
-      @rule1 = File::Find.new(:name => '*.txt')
-      @rule2 = File::Find.new
-   end
+    @rule1 = File::Find.new(:name => '*.txt')
+    @rule2 = File::Find.new
+  end
 
    def test_version
       assert_equal('0.3.4', File::Find::VERSION)
@@ -254,7 +254,10 @@ class TC_File_Find < Test::Unit::TestCase
       assert_equal(['a.foo', 'b.foo', 'c.foo'], @rule2.find.map{ |e| File.basename(e) })
       
       @rule2.maxdepth = nil
-      assert_equal(['a.foo', 'b.foo', 'c.foo', 'd.foo', 'e.foo', 'f.foo'], @rule2.find.map{ |e| File.basename(e) })
+      assert_equal(
+        ['a.foo', 'b.foo', 'c.foo', 'd.foo', 'e.foo', 'f.foo'],
+        @rule2.find.map{ |e| File.basename(e) }.sort
+      )
    end
 
    def test_maxdepth_directory
@@ -290,19 +293,31 @@ class TC_File_Find < Test::Unit::TestCase
       @rule2.pattern = "*.min"
 
       @rule2.mindepth = 0
-      assert_equal(['z.min', 'a.min', 'b.min', 'c.min', 'd.min', 'e.min', 'f.min'], @rule2.find.map{ |e| File.basename(e) })
+      assert_equal(
+        ['a.min', 'b.min', 'c.min', 'd.min', 'e.min', 'f.min', 'z.min'],
+        @rule2.find.map{ |e| File.basename(e) }.sort
+      )
 
       @rule2.mindepth = 1
-      assert_equal(['z.min', 'a.min', 'b.min', 'c.min', 'd.min', 'e.min', 'f.min'], @rule2.find.map{ |e| File.basename(e) })
+      assert_equal(
+        ['a.min', 'b.min', 'c.min', 'd.min', 'e.min', 'f.min', 'z.min'],
+        @rule2.find.map{ |e| File.basename(e) }.sort
+      )
 
       @rule2.mindepth = 2
-      assert_equal(['a.min', 'b.min', 'c.min', 'd.min', 'e.min', 'f.min'], @rule2.find.map{ |e| File.basename(e) })
+      assert_equal(
+        ['a.min', 'b.min', 'c.min', 'd.min', 'e.min', 'f.min'],
+        @rule2.find.map{ |e| File.basename(e) }.sort
+      )
       
       @rule2.mindepth = 3
-      assert_equal(['b.min', 'c.min', 'd.min', 'e.min', 'f.min'], @rule2.find.map{ |e| File.basename(e) })
+      assert_equal(
+        ['b.min', 'c.min', 'd.min', 'e.min', 'f.min'],
+        @rule2.find.map{ |e| File.basename(e) }.sort
+      )
       
       @rule2.mindepth = 4
-      assert_equal(['d.min', 'e.min', 'f.min'], @rule2.find.map{ |e| File.basename(e) })
+      assert_equal(['d.min', 'e.min', 'f.min'], @rule2.find.map{ |e| File.basename(e) }.sort)
 
       @rule2.mindepth = 5
       assert_equal([], @rule2.find.map{ |e| File.basename(e) })
@@ -368,7 +383,7 @@ class TC_File_Find < Test::Unit::TestCase
       assert_equal(1, results1.length)
       assert_equal(2, results2.length)
       assert_equal('test1.rb', File.basename(results1.first))
-      assert_equal(['test1.rb', 'test1.txt'], results2.map{ |e| File.basename(e) })
+      assert_equal(['test1.rb', 'test1.txt'], results2.map{ |e| File.basename(e) }.sort)
    end
 
    def test_prune_basic
