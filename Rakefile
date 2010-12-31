@@ -26,7 +26,7 @@ namespace :gem do
 end
 
 Rake::TestTask.new do |t|
-  task :test => 'gem:clean'
+  task :test => 'clean'
   t.warning = true
   t.verbose = true
 end
