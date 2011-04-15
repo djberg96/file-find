@@ -169,7 +169,7 @@ class File::Find
   #    )
   #
   def initialize(options = {})
-    @options = options      
+    @options = options
 
     @atime  = nil
     @ctime  = nil
@@ -208,11 +208,11 @@ class File::Find
   #      :name    => "*.rb",
   #      :follow  => false,
   #      :path    => ['/usr/local/lib', '/opt/local/lib']
-  #   )   
+  #   )
   #
   #   rule.find{ |f|
   #      puts f
-  #   }    
+  #   }
   #
   def find
     results = [] unless block_given?
@@ -237,7 +237,7 @@ class File::Find
           orig = file.dup
           file = File.join(path, file)
 
-          stat_method = @follow ? :lstat : :stat
+          stat_method = @follow ? :stat : :lstat
 
           # Skip files we cannot access, stale links, etc.
           begin
@@ -253,8 +253,8 @@ class File::Find
 
           # Dir[] doesn't like backslashes
           if File::ALT_SEPARATOR
-            file.tr!(File::ALT_SEPARATOR, File::SEPARATOR) 
-            glob.tr!(File::ALT_SEPARATOR, File::SEPARATOR) 
+            file.tr!(File::ALT_SEPARATOR, File::SEPARATOR)
+            glob.tr!(File::ALT_SEPARATOR, File::SEPARATOR)
           end
 
           if @mount
@@ -408,7 +408,7 @@ class File::Find
 
     block_given? ? nil : results
   end
-   
+
   # Limits searches to the same file system as the specified +mount_point+.
   #
   def mount=(mount_point)
