@@ -11,7 +11,7 @@ end
 
 class File::Find
   # The version of the file-find library
-  VERSION = '0.3.4'
+  VERSION = '0.3.5'
 
   # :stopdoc:
   VALID_OPTIONS = %w/

@@ -68,7 +68,7 @@ class TC_File_Find < Test::Unit::TestCase
   end
 
    def test_version
-      assert_equal('0.3.4', File::Find::VERSION)
+      assert_equal('0.3.5', File::Find::VERSION)
    end
 
    def test_path

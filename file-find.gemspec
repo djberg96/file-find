@@ -2,7 +2,7 @@ require 'rubygems'
 
 Gem::Specification.new do |spec|
   spec.name      = 'file-find'
-  spec.version   = '0.3.4'
+  spec.version   = '0.3.5'
   spec.author    = 'Daniel Berger'
   spec.license   = 'Artistic 2.0'
   spec.summary   = 'A better way to find files'
@@ -11,7 +11,6 @@ Gem::Specification.new do |spec|
   spec.platform  = Gem::Platform::RUBY
   spec.files     = Dir['**/*'].reject{ |f| f.include?('git') }
   spec.test_file = 'test/test_file_find.rb'
-  spec.has_rdoc  = true
 
   spec.rubyforge_project = 'shards'
   spec.extra_rdoc_files  = ['README', 'CHANGES', 'MANIFEST']

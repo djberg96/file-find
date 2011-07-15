@@ -1,3 +1,7 @@
+== 0.3.5 - 15-Jul-2011
+* Fixed a bug with the :follow option.
+* Gemspec, Rakefile and test cleanup.
+
 == 0.3.4 - 19-Sep-2009
 * Fixed a packaging bug. Thanks go to Gabriel Horner for the spot.
 * Added the 'gem' task to the Rakefile for building the gem. Removed the
