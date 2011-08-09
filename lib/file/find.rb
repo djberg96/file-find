@@ -267,7 +267,7 @@ class File::Find
 
           if @maxdepth || @mindepth
             file_depth = file.split(File::SEPARATOR).length
-            path_depth = @path.split(File::SEPARATOR).length
+            path_depth = path.split(File::SEPARATOR).length
             depth = file_depth - path_depth
 
             if @maxdepth && (depth > @maxdepth)
