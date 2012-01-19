@@ -1,5 +1,4 @@
 require 'date'
-require 'rbconfig'
 
 # For alternate implementations of Ruby, such as JRuby, that cannot
 # build C extensions fall back to the Etc module.
@@ -10,11 +9,15 @@ rescue LoadError
 end
 
 class File::Find
+
   # The version of the file-find library
-  VERSION = '0.3.5'
+  VERSION = '0.4.0'
+
+  private
 
   # :stopdoc:
-  VALID_OPTIONS = %w/
+
+  VALID_OPTIONS = %w[
     atime
     ctime
     follow
@@ -33,7 +36,10 @@ class File::Find
     prune
     size
     user
-  /
+  ]
+
+  public
+
   # :startdoc:
 
   # The starting path(s) for the search. The default is the current directory.
@@ -234,7 +240,6 @@ class File::Find
             next if prune_regex.match(file)
           end
 
-          orig = file.dup
           file = File.join(path, file)
 
           stat_method = @follow ? :stat : :lstat
@@ -347,7 +352,7 @@ class File::Find
             end
           end
 
-          unless Config::CONFIG['host_os'] =~ /windows|mswin/i
+          unless File::ALT_SEPARATOR
             if @inum
               next unless stat_info.ino == @inum
             end
@@ -463,8 +468,8 @@ class File::Find
 
       junk, who, what, how = match.to_a
 
-      who  = who.split(//).inject(who_num=0){ |num,b| num |= left[b]; num }
-      how  = how.split(//).inject(how_num=0){ |num,b| num |= right[b]; num }
+      who  = who.split(//).inject(0){ |num,b| num |= left[b]; num }
+      how  = how.split(//).inject(0){ |num,b| num |= right[b]; num }
       mask = who & how
 
       case what
