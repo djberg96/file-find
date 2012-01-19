@@ -466,7 +466,7 @@ class File::Find
       match = cmd.match(regex)
       raise "Invalid symbolic permissions: '#{str}'" if match.nil?
 
-      junk, who, what, how = match.to_a
+      who, what, how = match.to_a[1..3]
 
       who  = who.split(//).inject(0){ |num,b| num |= left[b]; num }
       how  = how.split(//).inject(0){ |num,b| num |= right[b]; num }
