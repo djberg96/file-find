@@ -14,7 +14,12 @@ namespace :gem do
       spec.add_dependency('sys-admin', '>= 1.5.2')
     end   
 
-    Gem::Builder.new(spec).build
+    if Gem::VERSION.to_f < 2.0
+      Gem::Builder.new(spec).build
+    else
+      require 'rubygems/package'
+      Gem::Package.build(spec)
+    end
   end
 
   desc "Install the file-find gem"
