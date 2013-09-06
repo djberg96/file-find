@@ -4,13 +4,9 @@
 # Test case for the File::Find package. You should run this via the
 # 'rake test' task.
 ######################################################################
-require 'rubygems'
-gem 'test-unit'
-
-require 'test/unit'
+require 'test-unit'
 require 'fileutils'
 require 'file/find'
-require 'rbconfig'
 
 begin
   require 'sys/admin'
@@ -18,7 +14,6 @@ rescue LoadError
   require 'etc'
 end
 
-include Config
 include FileUtils
 
 class TC_File_Find < Test::Unit::TestCase
@@ -68,7 +63,7 @@ class TC_File_Find < Test::Unit::TestCase
   end
 
   def test_version
-    assert_equal('0.3.5', File::Find::VERSION)
+    assert_equal('0.3.6', File::Find::VERSION)
   end
 
   def test_path
