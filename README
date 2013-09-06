@@ -76,6 +76,8 @@
   * ok - This is not interactive software.
 
 = Known Issues
+  The mindepth and maxdepth options do not work for more than 1 path.
+
   The 'perm' option does not work on MS Windows, even for its limited subset of
   permissions, i.e. 664 and 666. This is arguably a bug in Ruby's
   File::Stat.mode method on MS Windows.
@@ -91,8 +93,9 @@
 
 = Bugs
   None that I'm aware of beyond the ones mentioned in the Known Issues. Please
-  log any bug reports on the project page at
-  http://www.rubyforge.org/projects/shards.
+  log any bug reports on the project page at:
+
+  http://github.com/djberg96/file-find
 
 = Acknowledgements
   * Richard Clamp's File::Find::Rule Perl module for additional ideas and
@@ -104,7 +107,7 @@
   Artistic 2.0
 
 = Copyright
-  (C) 2007-2011, Daniel J. Berger, All Rights Reserved
+  (C) 2007-2013, Daniel J. Berger, All Rights Reserved
 
 = Author
   Daniel J. Berger

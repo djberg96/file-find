@@ -1,3 +1,9 @@
+== 0.3.6 - 6-Sep-2013
+* Removed rbconfig from library and test file. Just use File::ALT_SEPARATOR
+  to check for Windows instead.
+* Removed unused variables.
+* Updated dev dependencies.
+
 == 0.3.5 - 15-Jul-2011
 * Fixed a bug with the :follow option.
 * Gemspec, Rakefile and test cleanup.
