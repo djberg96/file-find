@@ -246,7 +246,7 @@ class TC_File_Find < Test::Unit::TestCase
     assert_equal(['a.foo'], @rule2.find.map{ |e| File.basename(e) })
 
     @rule2.maxdepth = 3
-    assert_equal(['a.foo', 'b.foo', 'c.foo'], @rule2.find.map{ |e| File.basename(e) })
+    assert_equal(['a.foo', 'b.foo', 'c.foo'], @rule2.find.map{ |e| File.basename(e) }.sort)
 
     @rule2.maxdepth = nil
     assert_equal(
