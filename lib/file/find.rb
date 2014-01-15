@@ -236,7 +236,6 @@ class File::Find
           file = File.join(path, file)
 
           stat_method = @follow ? :stat : :lstat
-
           # Skip files we cannot access, stale links, etc.
           begin
             stat_info = File.send(stat_method, file)
@@ -247,7 +246,13 @@ class File::Find
             retry if stat_method.to_s != 'lstat'
           end
 
-          glob = File.join(File.dirname(file), @name)
+
+
+          # We need to escape any brackets in the directory
+          # Otherwise it won't appear in Dir[glob], and we
+          # won't descend into directories with brackets
+          glob = File.join(File.dirname(file).gsub(/([\[\]])/,'\\\\\1'), @name)
+
 
           # Dir[] doesn't like backslashes
           if File::ALT_SEPARATOR
