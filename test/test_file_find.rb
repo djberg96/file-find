@@ -229,20 +229,19 @@ class TC_File_Find < Test::Unit::TestCase
     assert_nil(@rule1.maxdepth)
   end
 
+  # This test is a little uglier because we actually check to make sure
+  # we're looking at the right subdir, not just a filename shows up.
+  # I did this because I'm a little paranoid about the directory
+  # not getting mangled. - jlawler.
+  #
   def test_dirs_with_brackets
-    #This test is a little uglier because we actually check to make sure
-    #we're looking at the right subdir, not just a filename shows up.
-    #I did this because I'm a little paranoid about the directory
-    #not getting mangled.
+    omit_if(@@windows, 'dirs with brackets test skipped on MS Windows')
 
     bracket_files = [ 'bracket/a[1]/a.foo', 'bracket/a [2] /b.foo', 'bracket/[a] b [c]/d.foo' ].sort
     bracket_paths = [ 'bracket/a[1]', 'bracket/a [2] ', 'bracket/[a] b [c]', 'bracket/[z] x' ].sort
-    bracket_paths.each{|e| 
-      mkpath(e)
-    }
-    bracket_files.each {|e|
-      touch(e)
-    }
+
+    bracket_paths.each{ |e| mkpath(e) }
+    bracket_files.each{ |e| touch(e) }
 
     @file_rule = File::Find.new(
       :ftype => 'file',
@@ -259,11 +258,10 @@ class TC_File_Find < Test::Unit::TestCase
     assert_equal(bracket_files.size,file_results.size)
     path = file_results.first.chomp(bracket_files.first)
 
-    #Confirm the first thing in results is the first thing in bracket_paths
-    assert_not_equal( path, file_results.first, "Danger, in the brackets test we couldn't figure out what the base path is!" )
-
-    assert_equal( bracket_files, file_results.map{ |e| e.sub(path,'') }.sort )
-    assert_equal( bracket_paths, @dir_rule.find.sort )
+    # Confirm the first thing in results is the first thing in bracket_paths
+    assert_not_equal(path, file_results.first)
+    assert_equal(bracket_files, file_results.map{ |e| e.sub(path,'') }.sort )
+    assert_equal(bracket_paths, @dir_rule.find.sort )
   end
 
   def test_maxdepth_file
