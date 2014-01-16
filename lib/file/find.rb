@@ -10,7 +10,7 @@ end
 
 class File::Find
   # The version of the file-find library
-  VERSION = '0.3.6'
+  VERSION = '0.3.7'
 
   # :stopdoc:
   VALID_OPTIONS = %w/
@@ -246,13 +246,8 @@ class File::Find
             retry if stat_method.to_s != 'lstat'
           end
 
-
-
-          # We need to escape any brackets in the directory
-          # Otherwise it won't appear in Dir[glob], and we
-          # won't descend into directories with brackets
+          # We need to escape any brackets in the directory name.
           glob = File.join(File.dirname(file).gsub(/([\[\]])/,'\\\\\1'), @name)
-
 
           # Dir[] doesn't like backslashes
           if File::ALT_SEPARATOR

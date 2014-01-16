@@ -1,3 +1,7 @@
+== 0.3.7 - 15-Jan-2014
+* Fixed a bug with brackets in the path name. Thanks go to Jeremy Lawler
+  for the spot and the patch.
+
 == 0.3.6 - 6-Sep-2013
 * Removed rbconfig from library and test file. Just use File::ALT_SEPARATOR
   to check for Windows instead.
