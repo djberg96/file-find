@@ -1,16 +1,9 @@
 require 'date'
-
-# For alternate implementations of Ruby, such as JRuby, that cannot
-# build C extensions fall back to the Etc module.
-begin
-  require 'sys/admin'
-rescue LoadError
-  require 'etc'
-end
+require 'sys/admin'
 
 class File::Find
   # The version of the file-find library
-  VERSION = '0.3.7'
+  VERSION = '0.3.8'
 
   # :stopdoc:
   VALID_OPTIONS = %w/
@@ -482,21 +475,13 @@ class File::Find
   # sake of platforms that cannot build extensions, such as JRuby.
   #
   def get_group(gid)
-    if defined? Sys::Admin
-      Sys::Admin.get_group(gid)
-    else
-      Etc.getgrgid(gid)
-    end
+    Sys::Admin.get_group(gid)
   end
 
   # Returns the user object based on the group id. Implemented for the
   # sake of platforms that cannot build extensions, such as JRuby.
   #
   def get_user(uid)
-    if defined? Sys::Admin
-      Sys::Admin.get_user(uid)
-    else
-      Etc.getpwuid(uid)
-    end
+    Sys::Admin.get_user(uid)
   end
 end

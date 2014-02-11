@@ -7,12 +7,7 @@
 require 'test-unit'
 require 'fileutils'
 require 'file/find'
-
-begin
-  require 'sys/admin'
-rescue LoadError
-  require 'etc'
-end
+require 'sys/admin'
 
 include FileUtils
 
@@ -24,13 +19,8 @@ class TC_File_Find < Test::Unit::TestCase
     @@jruby   = RUBY_PLATFORM.match('java')
 
     unless @@windows
-      if @@jruby || !defined? Sys::Admin
-        @@loguser = Etc.getpwnam(Etc.getlogin)
-        @@logroup = Etc.getgrgid(@@loguser.gid)
-      else
-        @@loguser = Sys::Admin.get_user(Sys::Admin.get_login)
-        @@logroup = Sys::Admin.get_group(@@loguser.gid)
-      end
+      @@loguser = Sys::Admin.get_user(Sys::Admin.get_login)
+      @@logroup = Sys::Admin.get_group(@@loguser.gid)
     end
   end
 
@@ -63,7 +53,7 @@ class TC_File_Find < Test::Unit::TestCase
   end
 
   def test_version
-    assert_equal('0.3.7', File::Find::VERSION)
+    assert_equal('0.3.8', File::Find::VERSION)
   end
 
   def test_path
