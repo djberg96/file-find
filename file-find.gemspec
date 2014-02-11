@@ -15,7 +15,7 @@ Gem::Specification.new do |spec|
   spec.extra_rdoc_files  = ['README', 'CHANGES', 'MANIFEST']
 
   spec.add_development_dependency('test-unit', '>= 2.5.0')
-  spec.add_development_dependency('sys-admin')
+  spec.add_development_dependency('sys-admin', '>= 1.6.0')
   spec.add_development_dependency('rake')
 
   spec.description = <<-EOF
