@@ -1,3 +1,7 @@
+== 0.3.8 - ???
+* Removed all references to the Etc module since the sys-admin library now uses
+  FFI and works with JRuby.
+
 == 0.3.7 - 15-Jan-2014
 * Fixed a bug with brackets in the path name. Thanks go to Jeremy Lawler
   for the spot and the patch.
