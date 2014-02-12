@@ -8,12 +8,6 @@ namespace :gem do
   desc 'Create the file-find gem'
   task :create => [:clean] do
     spec = eval(IO.read('file-find.gemspec'))
-    if RUBY_PLATFORM.match('java')
-      spec.platform = Gem::Platform::CURRENT
-    else
-      spec.add_dependency('sys-admin', '>= 1.5.2')
-    end   
-
     if Gem::VERSION.to_f < 2.0
       Gem::Builder.new(spec).build
     else
