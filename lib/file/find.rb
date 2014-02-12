@@ -1,6 +1,12 @@
 require 'date'
 require 'sys/admin'
 
+begin
+  require 'win32/file'
+rescue LoadError
+  # Do nothing, not required, just nicer.
+end
+
 class File::Find
   # The version of the file-find library
   VERSION = '0.3.8'
@@ -110,12 +116,11 @@ class File::Find
 
   # Limits searches to files which have permissions that match the octal
   # value that you provide. For purposes of this comparison, only the user,
-  # group, and world settings are used. Do not use a leading 0 in the values
-  # that you supply, e.g. use 755 not 0755.
+  # group, and world settings are used.
   #
   # You may optionally use symbolic permissions, e.g. "g+rw", "u=rwx", etc.
   #
-  # Not currently supported on MS Windows.
+  # MS Windows only recognizes two modes, 0644 and 0444.
   #
   attr_accessor :perm
 
@@ -332,7 +337,19 @@ class File::Find
 
           if @group
             if @group.is_a?(String)
-              next unless get_group(stat_info.gid).name == @group
+              if File::ALT_SEPARATOR
+                begin
+                  next unless Sys::Admin.get_group(stat_info.gid, :LocalAccount => true).name == @@group
+                rescue Sys::Admin::Error
+                  next
+                end
+              else
+                begin
+                  next unless Sys::Admin.get_group(stat_info.gid).name == @@group
+                rescue Sys::Admin::Error
+                  next
+                end
+              end
             else
               next unless stat_info.gid == @group
             end
@@ -344,16 +361,13 @@ class File::Find
             end
           end
 
-          # This currently doesn't work on MS Windows, even in limited
-          # fashion for 0666 and 0664, because File.stat.mode doesn't
-          # return the proper value.
-          #
+          # Note that only 0644 and 0444 are supported on MS Windows.
           if @perm
             if @perm.is_a?(String)
               octal_perm = sym2oct(@perm)
               next unless stat_info.mode & octal_perm == octal_perm
             else
-              next unless sprintf("%o", stat_info.mode & 07777) == @perm.to_s
+              next unless sprintf("%o", stat_info.mode & 07777) == sprintf("%o", @perm)
             end
           end
 
@@ -378,7 +392,19 @@ class File::Find
 
           if @user
             if @user.is_a?(String)
-              next unless get_user(stat_info.uid).name == @user
+              if File::ALT_SEPARATOR
+                begin
+                  next unless Sys::Admin.get_user(stat_info.uid, :LocalAccount => true).name == @user
+                rescue Sys::Admin::Error
+                  next
+                end
+              else
+                begin
+                  next unless Sys::Admin.get_user(stat_info.uid).name == @user
+                rescue Sys::Admin::Error
+                  next
+                end
+              end
             else
               next unless stat_info.uid == @user
             end
@@ -469,19 +495,5 @@ class File::Find
     end
 
     perm
-  end
-
-  # Returns the group object based on the group id. Implemented for the
-  # sake of platforms that cannot build extensions, such as JRuby.
-  #
-  def get_group(gid)
-    Sys::Admin.get_group(gid)
-  end
-
-  # Returns the user object based on the group id. Implemented for the
-  # sake of platforms that cannot build extensions, such as JRuby.
-  #
-  def get_user(uid)
-    Sys::Admin.get_user(uid)
   end
 end
