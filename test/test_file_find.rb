@@ -9,6 +9,11 @@ require 'fileutils'
 require 'file/find'
 require 'sys/admin'
 
+if File::ALT_SEPARATOR
+  require 'win32/file'
+  require 'win32/security'
+end
+
 include FileUtils
 
 class TC_File_Find < Test::Unit::TestCase
@@ -18,9 +23,16 @@ class TC_File_Find < Test::Unit::TestCase
     @@windows = File::ALT_SEPARATOR
     @@jruby   = RUBY_PLATFORM.match('java')
 
-    unless @@windows
-      @@loguser = Sys::Admin.get_user(Sys::Admin.get_login)
+    if @@windows
+      @@elevated = Win32::Security.elevated_security?
+      if @@elevated
+        @@loguser = Sys::Admin.get_group("Administrators", :LocalAccount => true)
+      else
+        @@loguser = Sys::Admin.get_user(Sys::Admin.get_login, :LocalAccount => true)
+      end
+    else
       @@logroup = Sys::Admin.get_group(@@loguser.gid)
+      @@loguser = Sys::Admin.get_user(Sys::Admin.get_login)
     end
   end
 
@@ -37,8 +49,11 @@ class TC_File_Find < Test::Unit::TestCase
     File.open(@file_txt2, 'w'){}
     File.open(@file_doc, 'w'){}
 
-    unless @@windows
-      @link1 = 'link1'
+    @link1 = 'link1'
+
+    if @@windows
+      File.symlink(@file_rb, @link1) if @@elevated
+    else
       File.symlink(@file_rb, @link1)
     end
 
@@ -133,9 +148,7 @@ class TC_File_Find < Test::Unit::TestCase
     assert_nothing_raised{ File::Find.new(:writable? => true) }
   end
 
-  def test_filetest
-    omit_if(@@windows && @@jruby, "Skipping file test on JRuby/Windows")
-
+  test "find method works with filetest option" do
     rule = File::Find.new(:name => "*.doc", :writable? => true)
     File.chmod(0644, @file_doc)
 
@@ -238,10 +251,8 @@ class TC_File_Find < Test::Unit::TestCase
     assert_nil(@rule1.links)
   end
 
-  # TODO: Update test for Windows
   test "links method returns expected result" do
-    omit_if(@@windows, 'links test skipped on MS Windows')
-
+    omit_if(@@windows && !@@elevated)
     @rule1 = File::Find.new(:name => '*.rb', :links => 2)
     @rule2 = File::Find.new(:name => '*.doc', :links => 1)
 
@@ -434,13 +445,13 @@ class TC_File_Find < Test::Unit::TestCase
   end
 
   test "perm method returns expected results" do
-    omit_if(@@windows, 'perm test skipped on MS Windows')
-    File.chmod(0664, @file_rb)
+    File.chmod(0444, @file_rb)
     File.chmod(0644, @file_txt1)
-    results = File::Find.new(:name => "test1*", :perm => 664).find
+
+    results = File::Find.new(:name => "test1*", :perm => 0644).find
 
     assert_equal(1, results.length)
-    assert_equal('test1.rb', File.basename(results.first))
+    assert_equal('test1.txt', File.basename(results.first))
   end
 
   test "perm method works with symbolic permissions" do
@@ -489,23 +500,24 @@ class TC_File_Find < Test::Unit::TestCase
     assert_nil(@rule1.user)
   end
 
-  # TODO: Update for MS Windows.
   test "user method works with numeric id as expected" do
-    omit_if(@@windows, 'user test skipped on MS Windows')
-    @rule1 = File::Find.new(:name => '*.doc', :user => @@loguser.uid)
+    if @@windows && @@elevated
+      uid = @@loguser.gid # Windows assigns the group if any member is an admin
+    else
+      uid = @@loguser.uid
+    end
+
+    @rule1 = File::Find.new(:name => '*.doc', :user => uid)
     assert_equal([File.expand_path(@file_doc)], @rule1.find)
   end
 
-  # TODO: Update for MS Windows.
   test "user method works with string as expected" do
-    omit_if(@@windows, 'user test skipped on MS Windows')
+    omit_if(@@windows && @@elevated)
     @rule1 = File::Find.new(:name => '*.doc', :user => @@loguser.name)
     assert_equal([File.expand_path(@file_doc)], @rule1.find)
   end
 
-  # TODO: Update for MS Windows.
   test "find method with user option using invalid user returns expected results" do
-    omit_if(@@windows, 'user test skipped on MS Windows')
     @rule1 = File::Find.new(:name => '*.doc', :user => 'totallybogus')
     @rule2 = File::Find.new(:name => '*.doc', :user => 99999999)
     assert_equal([], @rule1.find)
@@ -532,7 +544,7 @@ class TC_File_Find < Test::Unit::TestCase
     rm_rf(@file_doc)
     rm_rf(@directory1)
     rm_rf(@directory2)
-    rm_rf(@link1) unless @@windows
+    rm_rf(@link1) #unless @@windows
     rm_rf('a')
     rm_rf('a1')
     rm_rf('bracket')
@@ -549,7 +561,7 @@ class TC_File_Find < Test::Unit::TestCase
   def self.shutdown
     @@windows = nil
     @@jruby   = nil
-    @@loguser = nil unless @@windows
+    @@elevated = nil if @@windows
     @@logroup = nil unless @@windows
   end
 end
