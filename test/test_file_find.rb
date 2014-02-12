@@ -31,8 +31,8 @@ class TC_File_Find < Test::Unit::TestCase
         @@loguser = Sys::Admin.get_user(Sys::Admin.get_login, :LocalAccount => true)
       end
     else
-      @@logroup = Sys::Admin.get_group(@@loguser.gid)
       @@loguser = Sys::Admin.get_user(Sys::Admin.get_login)
+      @@logroup = Sys::Admin.get_group(@@loguser.gid)
     end
   end
 
@@ -57,8 +57,8 @@ class TC_File_Find < Test::Unit::TestCase
       File.symlink(@file_rb, @link1)
     end
 
-    Dir.mkdir(@directory1) unless File.exists?(@directory1)
-    Dir.mkdir(@directory2) unless File.exists?(@directory2)
+    Dir.mkdir(@directory1) unless File.exist?(@directory1)
+    Dir.mkdir(@directory2) unless File.exist?(@directory2)
 
     File.open(File.join(@directory1, 'bar.txt'), 'w'){}
     File.open(File.join(@directory2, 'baz.txt'), 'w'){}
@@ -548,7 +548,7 @@ class TC_File_Find < Test::Unit::TestCase
     rm_rf('a')
     rm_rf('a1')
     rm_rf('bracket')
-    rm_rf('z.min') if File.exists?('z.min')
+    rm_rf('z.min') if File.exist?('z.min')
 
     @rule1 = nil
     @rule2 = nil
