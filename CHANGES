@@ -1,6 +1,9 @@
-== 0.3.8 - ???
+== 0.3.8 - 12-Feb-2014
 * Removed all references to the Etc module since the sys-admin library now uses
   FFI and works with JRuby.
+* Fixed the perm option on Windows for its limited subset of available perms.
+* You can now include a leading zero for the perm option if you wish.
+* Some tests that were previously omitted on Windows are now included.
 
 == 0.3.7 - 15-Jan-2014
 * Fixed a bug with brackets in the path name. Thanks go to Jeremy Lawler
