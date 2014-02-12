@@ -339,13 +339,13 @@ class File::Find
             if @group.is_a?(String)
               if File::ALT_SEPARATOR
                 begin
-                  next unless Sys::Admin.get_group(stat_info.gid, :LocalAccount => true).name == @@group
+                  next unless Sys::Admin.get_group(stat_info.gid, :LocalAccount => true).name == @group
                 rescue Sys::Admin::Error
                   next
                 end
               else
                 begin
-                  next unless Sys::Admin.get_group(stat_info.gid).name == @@group
+                  next unless Sys::Admin.get_group(stat_info.gid).name == @group
                 rescue Sys::Admin::Error
                   next
                 end
