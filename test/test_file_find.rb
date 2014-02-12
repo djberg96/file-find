@@ -52,29 +52,38 @@ class TC_File_Find < Test::Unit::TestCase
     @rule2 = File::Find.new
   end
 
-  def test_version
+  test "version constant is set to expected value" do
     assert_equal('0.3.8', File::Find::VERSION)
   end
 
-  def test_path
+  test "path accessor basic functionality" do
     assert_respond_to(@rule1, :path)
     assert_respond_to(@rule1, :path=)
+  end
+
+  test "path method returns expected value" do
     assert_equal(Dir.pwd, @rule1.path)
   end
 
-  def test_options
+  test "options accessor basic functionality" do
     assert_respond_to(@rule1, :options)
     assert_respond_to(@rule1, :options=)
+  end
+
+  test "options method returns expected value" do
     assert_equal({:name => '*.txt'}, @rule1.options)
   end
 
-  def test_atime_basic
+  test "atime accessor basic functionality" do
     assert_respond_to(@rule1, :atime)
     assert_respond_to(@rule1, :atime=)
+  end
+
+  test "atime method returns expected default value" do
     assert_nil(@rule1.atime)
   end
 
-  def test_atime
+  test "find with atime option works as expected" do
     rule1 = File::Find.new(:name => "*.rb", :atime => 0)
     rule2 = File::Find.new(:name => "*.rb", :atime => 1)
 
@@ -82,13 +91,16 @@ class TC_File_Find < Test::Unit::TestCase
     assert_true(rule2.find.empty?)
   end
 
-  def test_ctime_basic
+  test "ctime accessor basic functionality" do
     assert_respond_to(@rule1, :ctime)
     assert_respond_to(@rule1, :ctime=)
+  end
+
+  test "ctime method returns expected default value" do
     assert_nil(@rule1.ctime)
   end
 
-  def test_ctime
+  test "find with ctime option works as expected" do
     rule1 = File::Find.new(:name => "*.rb", :ctime => 0)
     rule2 = File::Find.new(:name => "*.rb", :ctime => 1)
 
@@ -96,24 +108,27 @@ class TC_File_Find < Test::Unit::TestCase
     assert_true(rule2.find.empty?)
   end
 
-  def test_find_basic
+  test "find method basic functionality" do
     assert_respond_to(@rule1, :find)
     assert_nothing_raised{ @rule1.find }
   end
 
-  def test_find
+  test "find method returns expected value" do
     assert_kind_of(Array, @rule1.find)
     assert_nil(@rule1.find{})
   end
 
-  def test_filetest_basic
+  test "filetest accessor basic functionality" do
     assert_respond_to(@rule1, :filetest)
     assert_respond_to(@rule1, :filetest=)
     assert_nothing_raised{ @rule1.filetest }
+  end
+
+  test "filetest method returns expected value" do
     assert_kind_of(Array, @rule1.filetest)
   end
 
-  def test_filetest_valid_options
+  test "valid filetest options work as expected" do
     assert_nothing_raised{ File::Find.new(:readable? => true) }
     assert_nothing_raised{ File::Find.new(:writable? => true) }
   end
@@ -131,7 +146,16 @@ class TC_File_Find < Test::Unit::TestCase
     assert_equal([], rule.find)
   end
 
-  def test_mtime
+  test "mtime accessor basic functionality" do
+    assert_respond_to(@rule1, :mtime)
+    assert_respond_to(@rule1, :mtime=)
+  end
+
+  test "mtime method returns expected default value" do
+    assert_nil(@rule1.mtime)
+  end
+
+  test "find with mtime option works as expected" do
     rule1 = File::Find.new(:name => "*.rb", :mtime => 0)
     rule2 = File::Find.new(:name => "*.rb", :mtime => 1)
 
@@ -139,19 +163,16 @@ class TC_File_Find < Test::Unit::TestCase
     assert_true(rule2.find.empty?)
   end
 
-  def test_mtime_basic
-    assert_respond_to(@rule1, :mtime)
-    assert_respond_to(@rule1, :mtime=)
-    assert_nil(@rule1.mtime)
-  end
-
-  def test_ftype_basic
+  test "ftype accessor basic functionality" do
     assert_respond_to(@rule1, :ftype)
     assert_respond_to(@rule1, :ftype=)
+  end
+
+  test "ftype method returns expected default value" do
     assert_nil(@rule1.ftype)
   end
 
-  def test_ftype
+  test "ftype method works as expected" do
     rule1 = File::Find.new(:name => "*.rb", :ftype => "file")
     rule2 = File::Find.new(:name => "*.rb", :ftype => "characterSpecial")
 
@@ -159,25 +180,30 @@ class TC_File_Find < Test::Unit::TestCase
     assert_true(rule2.find.empty?)
   end
 
-  def test_group_basic
+  test "group accessor basic functionality" do
     assert_respond_to(@rule1, :group)
     assert_respond_to(@rule1, :group=)
+  end
+
+  test "group method returns expected default value" do
     assert_nil(@rule1.group)
   end
 
-  def test_group_with_numeric_id
+  # TODO: Update test for Windows
+  test "find with numeric group id works as expected" do
     omit_if(@@windows, 'group test skipped on MS Windows')
     @rule1 = File::Find.new(:name => '*.doc', :group => @@loguser.gid)
     assert_equal([File.expand_path(@file_doc)], @rule1.find)
   end
 
-  def test_group_with_string
+  # TODO: Update test for Windows
+  test "find with string group id works as expected" do
     omit_if(@@windows, 'group test skipped on MS Windows')
     @rule1 = File::Find.new(:name => '*.doc', :group => @@logroup.name)
     assert_equal([File.expand_path(@file_doc)], @rule1.find)
   end
 
-  def test_group_with_bad_id
+  test "find with bogus group returns empty results" do
     omit_if(@@windows, 'group test skipped on MS Windows')
     @rule1 = File::Find.new(:name => '*.doc', :group => 'totallybogus')
     @rule2 = File::Find.new(:name => '*.doc', :group => 99999999)
@@ -185,25 +211,35 @@ class TC_File_Find < Test::Unit::TestCase
     assert_equal([], @rule2.find)
   end
 
-  def test_inum_basic
+  test "inum accessor basic functionality" do
     assert_respond_to(@rule1, :inum)
     assert_respond_to(@rule1, :inum=)
+  end
+
+  test "inum method returns expected default value" do
     assert_nil(@rule1.inum)
   end
 
-  def test_follow_basic
+  test "follow accessor basic functionality" do
     assert_respond_to(@rule1, :follow)
     assert_respond_to(@rule1, :follow=)
+  end
+
+  test "follow method returns expected default value" do
     assert_true(@rule1.follow)
   end
 
-  def test_links_basic
+  test "links accessor basic functionality" do
     assert_respond_to(@rule1, :links)
     assert_respond_to(@rule1, :links=)
+  end
+
+  test "links method returns expected default value" do
     assert_nil(@rule1.links)
   end
 
-  def test_links
+  # TODO: Update test for Windows
+  test "links method returns expected result" do
     omit_if(@@windows, 'links test skipped on MS Windows')
 
     @rule1 = File::Find.new(:name => '*.rb', :links => 2)
@@ -224,7 +260,7 @@ class TC_File_Find < Test::Unit::TestCase
   # I did this because I'm a little paranoid about the directory
   # not getting mangled. - jlawler.
   #
-  def test_dirs_with_brackets
+  test "find method works on dirs that contain brackets" do
     omit_if(@@windows, 'dirs with brackets test skipped on MS Windows')
 
     bracket_files = [ 'bracket/a[1]/a.foo', 'bracket/a [2] /b.foo', 'bracket/[a] b [c]/d.foo' ].sort
@@ -254,7 +290,7 @@ class TC_File_Find < Test::Unit::TestCase
     assert_equal(bracket_paths, @dir_rule.find.sort )
   end
 
-  def test_maxdepth_file
+  test "find with maxdepth option returns expected results" do
     mkpath('a1/a2/a3')
     touch('a1/a.foo')
     touch('a1/a2/b.foo')
@@ -280,7 +316,7 @@ class TC_File_Find < Test::Unit::TestCase
     )
   end
 
-  def test_maxdepth_directory
+  test "find with maxdepth option returns expected results for directories" do
     mkpath('a/b/c')
     @rule2.pattern = "c"
 
@@ -294,13 +330,16 @@ class TC_File_Find < Test::Unit::TestCase
     assert_equal(['c'], @rule2.find.map{ |e| File.basename(e) })
   end
 
-  def test_mindepth_basic
+  test "mindepth accessor basic functionality" do
     assert_respond_to(@rule1, :mindepth)
     assert_respond_to(@rule1, :mindepth=)
+  end
+
+  test "mindepth method returns expected default value" do
     assert_nil(@rule1.mindepth)
   end
 
-  def test_mindepth_file
+  test "find with mindepth option returns expected results" do
     mkpath('a1/a2/a3')
     touch('z.min')
     touch('a1/a.min')
@@ -343,7 +382,7 @@ class TC_File_Find < Test::Unit::TestCase
     assert_equal([], @rule2.find.map{ |e| File.basename(e) })
   end
 
-  def test_mindepth_directory
+  test "find with mindepth option returns expected results for directories" do
     mkpath('a/b/c')
     @rule2.pattern = "a"
 
@@ -357,32 +396,44 @@ class TC_File_Find < Test::Unit::TestCase
     assert_equal([], @rule2.find)
   end
 
-  def test_mount_basic
+  test "mount accessor basic functionality" do
     assert_respond_to(@rule1, :mount)
     assert_respond_to(@rule1, :mount=)
+  end
+
+  test "mount method returns expected default value" do
     assert_nil(@rule1.mount)
   end
 
-  def test_name_basic
+  test "name accessor basic functionality" do
     assert_respond_to(@rule1, :name)
     assert_respond_to(@rule1, :name=)
+  end
+
+  test "name method returns expected default value" do
     assert_equal('*.txt', @rule1.name)
   end
 
-  def test_pattern_alias
+  test "pattern accessor basic functionality" do
     assert_respond_to(@rule1, :pattern)
     assert_respond_to(@rule1, :pattern=)
-    assert_true(@rule1.method(:name) == @rule1.method(:pattern))
-    assert_true(@rule1.method(:name=) == @rule1.method(:pattern=))
   end
 
-  def test_perm_basic
+  test "pattern is an alias for name" do
+    assert_alias_method(@rule1, :name, :pattern)
+    assert_alias_method(@rule1, :name=, :pattern=)
+  end
+
+  test "perm accessor basic functionality" do
     assert_respond_to(@rule1, :perm)
     assert_respond_to(@rule1, :perm=)
+  end
+
+  test "perm method returns expected default value" do
     assert_nil(@rule1.perm)
   end
 
-  def test_perm
+  test "perm method returns expected results" do
     omit_if(@@windows, 'perm test skipped on MS Windows')
     File.chmod(0664, @file_rb)
     File.chmod(0644, @file_txt1)
@@ -392,7 +443,7 @@ class TC_File_Find < Test::Unit::TestCase
     assert_equal('test1.rb', File.basename(results.first))
   end
 
-  def test_perm_with_symbolic_permissions
+  test "perm method works with symbolic permissions" do
     omit_if(@@windows, 'symbolic perm test skipped on MS Windows')
 
     File.chmod(0664, @file_rb)  # test1.rb
@@ -406,42 +457,54 @@ class TC_File_Find < Test::Unit::TestCase
     assert_equal(['test1.rb', 'test1.txt'], results2.map{ |e| File.basename(e) }.sort)
   end
 
-  def test_prune_basic
+  test "prune accessor basic functionality" do
     assert_respond_to(@rule1, :prune)
     assert_respond_to(@rule1, :prune=)
+  end
+
+  test "prune method returns expected default value" do
     assert_nil(@rule1.prune)
   end
 
-  def test_prune
+  test "find method with prune option works as expected" do
     rule = File::Find.new(:name => "*.txt", :prune => 'foo')
     assert_equal('test1.txt', File.basename(rule.find.first))
   end
 
-  def test_size_basic
+  test "size accessor basic functionality" do
     assert_respond_to(@rule1, :size)
     assert_respond_to(@rule1, :size=)
+  end
+
+  test "size method returns expected default value" do
     assert_nil(@rule1.size)
   end
 
-  def test_user_basic
+  test "user accessor basic functionality" do
     assert_respond_to(@rule1, :user)
     assert_respond_to(@rule1, :user=)
+  end
+
+  test "user method returns expected default value" do
     assert_nil(@rule1.user)
   end
 
-  def test_user_with_numeric_id
+  # TODO: Update for MS Windows.
+  test "user method works with numeric id as expected" do
     omit_if(@@windows, 'user test skipped on MS Windows')
     @rule1 = File::Find.new(:name => '*.doc', :user => @@loguser.uid)
     assert_equal([File.expand_path(@file_doc)], @rule1.find)
   end
 
-  def test_user_with_string
+  # TODO: Update for MS Windows.
+  test "user method works with string as expected" do
     omit_if(@@windows, 'user test skipped on MS Windows')
     @rule1 = File::Find.new(:name => '*.doc', :user => @@loguser.name)
     assert_equal([File.expand_path(@file_doc)], @rule1.find)
   end
 
-  def test_user_with_bad_id
+  # TODO: Update for MS Windows.
+  test "find method with user option using invalid user returns expected results" do
     omit_if(@@windows, 'user test skipped on MS Windows')
     @rule1 = File::Find.new(:name => '*.doc', :user => 'totallybogus')
     @rule2 = File::Find.new(:name => '*.doc', :user => 99999999)
@@ -449,12 +512,15 @@ class TC_File_Find < Test::Unit::TestCase
     assert_equal([], @rule2.find)
   end
 
-  def test_previous_basic
+  test "previous method basic functionality" do
     assert_respond_to(@rule1, :previous)
   end
 
-  def test_expected_errors
+  test "an error is raised if the path does not exist" do
     assert_raise(Errno::ENOENT){ File::Find.new(:path => '/bogus/dir').find }
+  end
+
+  test "an error is raised if an invalid option is passed" do
     assert_raise(ArgumentError){ File::Find.new(:bogus => 1) }
     assert_raise(ArgumentError){ File::Find.new(:bogus? => true) }
   end
