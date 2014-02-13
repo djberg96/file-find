@@ -12,7 +12,7 @@ class File::Find
   VERSION = '0.3.8'
 
   # :stopdoc:
-  VALID_OPTIONS = %w/
+  VALID_OPTIONS = %w[
     atime
     ctime
     follow
@@ -31,7 +31,7 @@ class File::Find
     prune
     size
     user
-  /
+  ]
   # :startdoc:
 
   # The starting path(s) for the search. The default is the current directory.
