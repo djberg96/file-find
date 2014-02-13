@@ -59,8 +59,6 @@ class File::Find
   # Limits searches to files that belong to a specific group, where the
   # group can be either a group name or ID.
   #
-  # Not currently supported on MS Windows.
-  #
   attr_accessor :group
 
   # An array of two element arrays for storing FileTest methods and their
@@ -79,8 +77,7 @@ class File::Find
   #
   attr_accessor :ftype
 
-  # Limits search to a file with a specific inode number. Ignored on MS
-  # Windows.
+  # Limits search to a file with a specific inode number.
   #
   attr_accessor :inum
 
@@ -137,8 +134,6 @@ class File::Find
 
   # Limits searches to files that belong to a specific user, where the user
   # can be either a user name or an ID.
-  #
-  # Not currently supported on MS Windows.
   #
   attr_accessor :user
 
@@ -355,10 +350,8 @@ class File::Find
             end
           end
 
-          unless File::ALT_SEPARATOR
-            if @inum
-              next unless stat_info.ino == @inum
-            end
+          if @inum
+            next unless stat_info.ino == @inum
           end
 
           # Note that only 0644 and 0444 are supported on MS Windows.
