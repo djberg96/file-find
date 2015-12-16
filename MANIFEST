@@ -3,5 +3,7 @@
 * Rakefile
 * README
 * file-find.gemspec
+* certs/djberg96_pub.pem
+* lib/file-find.rb
 * lib/file/find.rb
 * test/test_file_find.rb
