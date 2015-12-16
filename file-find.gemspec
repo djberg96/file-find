@@ -1,17 +1,17 @@
 require 'rubygems'
 
 Gem::Specification.new do |spec|
-  spec.name      = 'file-find'
-  spec.version   = '0.3.8'
-  spec.author    = 'Daniel Berger'
-  spec.license   = 'Artistic 2.0'
-  spec.summary   = 'A better way to find files'
-  spec.email     = 'djberg96@gmail.com'
-  spec.homepage  = 'http://github.com/djberg96/file-find'
-  spec.files     = Dir['**/*'].reject{ |f| f.include?('git') }
-  spec.test_file = 'test/test_file_find.rb'
+  spec.name       = 'file-find'
+  spec.version    = '0.3.9'
+  spec.author     = 'Daniel Berger'
+  spec.license    = 'Artistic 2.0'
+  spec.summary    = 'A better way to find files'
+  spec.email      = 'djberg96@gmail.com'
+  spec.homepage   = 'http://github.com/djberg96/file-find'
+  spec.test_file  = 'test/test_file_find.rb'
+  spec.files      = Dir['**/*'].reject{ |f| f.include?('git') }
+  spec.cert_chain = Dir['certs/*']
 
-  spec.rubyforge_project = 'shards'
   spec.extra_rdoc_files  = ['README', 'CHANGES', 'MANIFEST']
 
   spec.add_dependency('sys-admin', '>= 1.6.0')
