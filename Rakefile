@@ -7,20 +7,16 @@ CLEAN.include("**/*.gem", "**/*.rbc", "**/link*")
 namespace :gem do
   desc 'Create the file-find gem'
   task :create => [:clean] do
+    require 'rubygems/package'
     spec = eval(IO.read('file-find.gemspec'))
-    if Gem::VERSION.to_f < 2.0
-      Gem::Builder.new(spec).build
-    else
-      require 'rubygems/package'
-      Gem::Package.build(spec)
-    end
+    Gem::Package.build(spec, true)
   end
 
   desc "Install the file-find gem"
   task :install => [:create] do
     ruby 'file-find.gemspec'
     file = Dir["*.gem"].first
-    sh "gem install #{file}"
+    sh "gem install -l #{file}"
   end
 end
 
