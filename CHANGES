@@ -1,3 +1,8 @@
+== 0.3.9 - 16-Dec-2015
+* This gem is now signed.
+* Added a file-find.rb file for convenience.
+* Updates to the Rakefile and gemspec.
+
 == 0.3.8 - 12-Feb-2014
 * Removed all references to the Etc module since the sys-admin library now uses
   FFI and works with JRuby.
