@@ -208,7 +208,7 @@ class File::Find
   #
   def find
     results = [] unless block_given?
-    paths   = @path.is_a?(String) ? [@path] : @path # Ruby 1.9.x compatibility
+    paths   = @path.is_a?(String) ? [@path] : @path
 
     if @prune
       prune_regex = Regexp.new(@prune)
@@ -216,9 +216,9 @@ class File::Find
       prune_regex = nil
     end
 
-    paths.each{ |path|
+    paths.each{ |lpath|
       begin
-        Dir.foreach(path){ |file|
+        Dir.foreach(lpath){ |file|
           next if file == '.'
           next if file == '..'
 
@@ -226,7 +226,7 @@ class File::Find
             next if prune_regex.match(file)
           end
 
-          file = File.join(path, file)
+          file = File.join(lpath, file)
 
           stat_method = @follow ? :stat : :lstat
           # Skip files we cannot access, stale links, etc.
@@ -257,9 +257,7 @@ class File::Find
           end
 
           if @maxdepth || @mindepth
-            file_depth = file.split(File::SEPARATOR).length
-            path_depth = @path.split(File::SEPARATOR).length
-            depth = file_depth - path_depth
+            depth = lpath.split(File::SEPARATOR).size
 
             if @maxdepth && (depth > @maxdepth)
               if File.directory?(file)
