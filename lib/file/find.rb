@@ -9,7 +9,7 @@ end
 
 class File::Find
   # The version of the file-find library
-  VERSION = '0.3.10'.freeze
+  VERSION = '0.4.0'.freeze
 
   # :stopdoc:
   VALID_OPTIONS = %w[
