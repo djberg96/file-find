@@ -1,3 +1,10 @@
+== 0.4.0 - 26-Dec-2018
+* License changed to Apache-2.0.
+* Fixed a bug where mindepth and maxdepth would break if more than one
+  path was specified as part of the rule. Thanks go to flagos for the spot.
+* The VERSION constant is now frozen.
+* The cert has been updated.
+
 == 0.3.9 - 16-Dec-2015
 * This gem is now signed.
 * Added a file-find.rb file for convenience.

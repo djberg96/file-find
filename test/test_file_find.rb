@@ -68,7 +68,8 @@ class TC_File_Find < Test::Unit::TestCase
   end
 
   test "version constant is set to expected value" do
-    assert_equal('0.3.9', File::Find::VERSION)
+    assert_equal('0.4.0', File::Find::VERSION)
+    assert_true(File::Find::VERSION.frozen?)
   end
 
   test "path accessor basic functionality" do
