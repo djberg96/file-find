@@ -1,4 +1,4 @@
-== 0.3.10 - 26-Dec-2018
+== 0.4.0 - 26-Dec-2018
 * License changed to Apache-2.0.
 * Fixed a bug where mindepth and maxdepth would break if more than one
   path was specified as part of the rule. Thanks go to flagos for the spot.
