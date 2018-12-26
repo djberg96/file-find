@@ -69,17 +69,10 @@
   * ok - This is not interactive software.
 
 = Known Issues
-  The mindepth and maxdepth options do not work for more than 1 path.
-
   The :perm option is limited to 0644 and 0444 on MS Windows.
 
   The :user, :group, and :inum options require the win32-file gem to work
   properly on MS Windows. However, it is not officially a dependency.
-
-  There are 3 test failures with JRuby, all related to the 'perm' option. I
-  have not been able to reduce them to a simple test case and discern the
-  exact cause of the failures, though I suspect a bug in the JRuby
-  implementation of File.chmod.
 
 = Bugs
   None that I'm aware of beyond the ones mentioned in the Known Issues. Please
@@ -94,10 +87,10 @@
   * Hal Fulton for his implementation of symbolic permissions.
 
 = License
-  Artistic 2.0
+  Apache-2.0
 
 = Copyright
-  (C) 2007-2015, Daniel J. Berger, All Rights Reserved
+  (C) 2007-2018, Daniel J. Berger, All Rights Reserved
 
 = Author
   Daniel J. Berger
