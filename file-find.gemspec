@@ -2,9 +2,9 @@ require 'rubygems'
 
 Gem::Specification.new do |spec|
   spec.name       = 'file-find'
-  spec.version    = '0.3.9'
+  spec.version    = '0.4.0'
   spec.author     = 'Daniel Berger'
-  spec.license    = 'Artistic 2.0'
+  spec.license    = 'Apache-2.0'
   spec.summary    = 'A better way to find files'
   spec.email      = 'djberg96@gmail.com'
   spec.homepage   = 'http://github.com/djberg96/file-find'
