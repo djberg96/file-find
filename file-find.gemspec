@@ -14,6 +14,15 @@ Gem::Specification.new do |spec|
 
   spec.extra_rdoc_files  = ['README', 'CHANGES', 'MANIFEST']
 
+  spec.metadata = {
+    'homepage_uri'      => 'https://github.com/djberg96/file-find',
+    'bug_tracker_uri'   => 'https://github.com/djberg96/file-find/issues',
+    'changelog_uri'     => 'https://github.com/djberg96/file-find/blob/master/CHANGES',
+    'documentation_uri' => 'https://github.com/djberg96/file-find/wiki',
+    'source_code_uri'   => 'https://github.com/djberg96/file-find',
+    'wiki_uri'          => 'https://github.com/djberg96/file-find/wiki'
+  }
+
   spec.add_dependency('sys-admin', '>= 1.6.0')
   spec.add_development_dependency('test-unit')
   spec.add_development_dependency('rake')
