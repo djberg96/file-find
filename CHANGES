@@ -1,3 +1,6 @@
+== 0.4.3 - 8-Jun-2020
+* Fixed a bug with ELOOP handling. Thanks go to joast for the spot and fix.
+
 == 0.4.2 - 6-May-2020
 * Added LICENSE file as required by the Apache-2.0 license.
 
