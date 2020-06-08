@@ -235,8 +235,10 @@ class File::Find
           rescue Errno::ENOENT, Errno::EACCES
             next
           rescue Errno::ELOOP
-            stat_method = :lstat # Handle recursive symlinks
-            retry if stat_method.to_s != 'lstat'
+            if stat_method.to_s != 'lstat'
+              stat_method = :lstat # Handle recursive symlinks
+              retry
+            end
           end
 
           # We need to escape any brackets in the directory name.
