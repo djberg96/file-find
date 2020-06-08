@@ -8,6 +8,7 @@ require 'test-unit'
 require 'fileutils'
 require 'file/find'
 require 'sys/admin'
+require 'tmpdir'
 
 if File::ALT_SEPARATOR
   require 'win32/file'
@@ -536,6 +537,26 @@ class TC_File_Find < Test::Unit::TestCase
   test "an error is raised if an invalid option is passed" do
     assert_raise(ArgumentError){ File::Find.new(:bogus => 1) }
     assert_raise(ArgumentError){ File::Find.new(:bogus? => true) }
+  end
+
+  # TODO: Update test for Windows
+  test 'eloop handling works as expected' do
+    omit_if(@@windows, 'eloop handling test skipped on MS Windows')
+
+    begin
+      dir_eloop = ::Dir.mktmpdir
+
+      Dir.chdir(dir_eloop) do
+        File.symlink('eloop0', 'eloop1')
+        File.symlink('eloop1', 'eloop0')
+        expecting = ['./eloop0', './eloop1']
+
+        results = File::Find.new(:path => '.', :follow => true).find
+        assert_equal(expecting, results.sort)
+      end
+    ensure
+      rm_rf(dir_eloop)
+    end
   end
 
   def teardown
