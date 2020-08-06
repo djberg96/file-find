@@ -1,3 +1,6 @@
+== 0.4.4 - 6-Aug-2020
+* Added .rdoc extensions to the CHANGES, README and MANIFEST files.
+
 == 0.4.3 - 8-Jun-2020
 * Fixed a bug with ELOOP handling. Thanks go to joast for the spot and fix.
 

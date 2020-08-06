@@ -1,6 +1,6 @@
-* CHANGES
-* LICENSE
-* MANIFEST
+* CHANGES.rdoc
+* LICENSE.rdoc
+* MANIFEST.rdoc
 * Rakefile
 * README
 * file-find.gemspec
