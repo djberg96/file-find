@@ -2,7 +2,7 @@ require 'rubygems'
 
 Gem::Specification.new do |spec|
   spec.name       = 'file-find'
-  spec.version    = '0.4.3'
+  spec.version    = '0.4.4'
   spec.author     = 'Daniel Berger'
   spec.license    = 'Apache-2.0'
   spec.summary    = 'A better way to find files'
@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.files      = Dir['**/*'].reject{ |f| f.include?('git') }
   spec.cert_chain = Dir['certs/*']
 
-  spec.extra_rdoc_files  = ['README', 'CHANGES', 'MANIFEST']
+  spec.extra_rdoc_files  = ['README.rdoc', 'CHANGES.rdoc', 'MANIFEST.rdoc']
 
   spec.metadata = {
     'homepage_uri'      => 'https://github.com/djberg96/file-find',
