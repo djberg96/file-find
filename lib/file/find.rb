@@ -9,7 +9,7 @@ end
 
 class File::Find
   # The version of the file-find library
-  VERSION = '0.4.4'.freeze
+  VERSION = '0.5.0'.freeze
 
   # :stopdoc:
   VALID_OPTIONS = %w[
@@ -260,7 +260,7 @@ class File::Find
           end
 
           if @maxdepth || @mindepth
-            file_depth = file.split(File::SEPARATOR).length
+            file_depth = file.split(File::SEPARATOR).reject{ |e| e.size.zero? }.length
             current_base_path = [@path].flatten.find{ |tpath| file.include?(tpath) }
             path_depth = current_base_path.split(File::SEPARATOR).length
 
