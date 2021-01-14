@@ -241,8 +241,9 @@ class File::Find
             end
           end
 
-          # We need to escape any brackets in the directory name.
-          glob = File.join(File.dirname(file).gsub(/([\[\]])/,'\\\\\1'), @name)
+          # We need to escape any brackets in the directory name, unless already escaped.
+          temp = File.dirname(file).gsub(/(?<!\\)([\[\]])/, '\\\\\1')
+          glob = File.join(temp, @name)
 
           # Dir[] doesn't like backslashes
           if File::ALT_SEPARATOR
