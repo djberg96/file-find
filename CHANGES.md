@@ -1,4 +1,4 @@
-## 0.5.0 - ???
+## 0.5.0 - 19-Jan-2021
 * Switched from test-unit to rspec, with an added development
   dependency on the fakefs gem.
 * Switched from rdoc to markdown because github doesn't render rdoc
