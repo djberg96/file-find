@@ -12,12 +12,10 @@ Gem::Specification.new do |spec|
   spec.files      = Dir['**/*'].reject{ |f| f.include?('git') }
   spec.cert_chain = Dir['certs/*']
 
-  spec.extra_rdoc_files  = ['README.rdoc', 'CHANGES.rdoc', 'MANIFEST.rdoc']
-
   spec.metadata = {
     'homepage_uri'      => 'https://github.com/djberg96/file-find',
     'bug_tracker_uri'   => 'https://github.com/djberg96/file-find/issues',
-    'changelog_uri'     => 'https://github.com/djberg96/file-find/blob/master/CHANGES',
+    'changelog_uri'     => 'https://github.com/djberg96/file-find/blob/master/CHANGES.md',
     'documentation_uri' => 'https://github.com/djberg96/file-find/wiki',
     'source_code_uri'   => 'https://github.com/djberg96/file-find',
     'wiki_uri'          => 'https://github.com/djberg96/file-find/wiki'
