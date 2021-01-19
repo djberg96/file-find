@@ -2,13 +2,13 @@ require 'rubygems'
 
 Gem::Specification.new do |spec|
   spec.name       = 'file-find'
-  spec.version    = '0.4.4'
+  spec.version    = '0.5.0'
   spec.author     = 'Daniel Berger'
   spec.license    = 'Apache-2.0'
   spec.summary    = 'A better way to find files'
   spec.email      = 'djberg96@gmail.com'
   spec.homepage   = 'http://github.com/djberg96/file-find'
-  spec.test_file  = 'test/test_file_find.rb'
+  spec.test_file  = 'spec/file_find_spec.rb'
   spec.files      = Dir['**/*'].reject{ |f| f.include?('git') }
   spec.cert_chain = Dir['certs/*']
 
@@ -23,8 +23,8 @@ Gem::Specification.new do |spec|
     'wiki_uri'          => 'https://github.com/djberg96/file-find/wiki'
   }
 
-  spec.add_dependency('sys-admin', '>= 1.6.0')
-  spec.add_development_dependency('test-unit')
+  spec.add_dependency('sys-admin', '~> 1.7')
+  spec.add_development_dependency('rspec', '~> 3.9')
   spec.add_development_dependency('rake')
 
   spec.description = <<-EOF
