@@ -9,7 +9,7 @@ library. It is modeled on a typical 'find' command found on most Unix systems.
 
 ## Synopsis
 ```ruby
-  require 'file/find'
+  require 'file/find' # 'file-find' also works
 
   rule = File::Find.new(
     :pattern => "*.rb",
