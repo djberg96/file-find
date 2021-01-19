@@ -1,15 +1,15 @@
-= Description
+## Description
 
 This is a drop-in replacement for the find module currently in the standard
 library. It is modeled on a typical 'find' command found on most Unix systems.
 
-= Installation
+## Installation
 
-gem install file-find
+`gem install file-find`
 
-= Synopsis
-
-  require 'file/find'
+## Synopsis
+```ruby
+  require 'file/find' # 'file-find' also works
 
   rule = File::Find.new(
     :pattern => "*.rb",
@@ -20,15 +20,16 @@ gem install file-find
   rule.find{ |f|
     puts f
   }
+```
 
-= Rationale
+## Rationale
 
 The current find module in the standard library is inadequate. It is, quite
 frankly, not much more than a plain Dir.glob call. This library provides an
 interface based on options typically available on your command line 'find'
 command, thus allowing you much greater control over how you find your files.
 
-= Options
+## Options
 
 * atime
 * ctime
@@ -47,18 +48,18 @@ command, thus allowing you much greater control over how you find your files.
 * size
 * user (name or id)
 
-In addition to the above options, FileTest methods such as 'readable?' and
-'writable?' may be used as keys, with true or false for their values.
+In addition to the above options, `FileTest` methods such as `readable?` and
+`writable?` may be used as keys, with true or false for their values.
 
-See the RDoc documentation for more details about these options.
+See the documentation for more details about these options.
 
-= Future Plans
+## Future Plans
 
 None at this time. Please log any feature requests on the project page at:
 
 http://github.com/djberg96/file-find
 
-= Options I won't support
+## Options I won't support
 
 Generally speaking, anything that would require mucking around with C code
 or is just too difficult to implement in a cross platform manner will not be
@@ -74,35 +75,35 @@ supported. These include the following options:
 
 * ok - This is not interactive software.
 
-= Known Issues
+## Known Issues
 
-The :perm option is limited to 0644 and 0444 on MS Windows.
+The `:perm` option is limited to 0644 and 0444 on MS Windows.
 
-The :user, :group, and :inum options require the win32-file gem to work
-properly on MS Windows. However, it is not officially a dependency.
+The `:user`, `:group`, and `:inum` options require the win32-file gem to work
+properly on MS Windows. However, win32-file is not officially a dependency.
 
-= Bugs
+## Bugs
 
 None that I'm aware of beyond the ones mentioned in the Known Issues. Please
 log any bug reports on the project page at:
 
 http://github.com/djberg96/file-find
 
-= Acknowledgements
+## Acknowledgements
 
 * Richard Clamp's File::Find::Rule Perl module for additional ideas and
   inspiration.
 * Bill Kleb for ideas regarding name, group and perm enhancements.
 * Hal Fulton for his implementation of symbolic permissions.
 
-= License
+## License
 
 Apache-2.0
 
-= Copyright
+## Copyright
 
-(C) 2007-2020, Daniel J. Berger, All Rights Reserved
+(C) 2007-2021, Daniel J. Berger, All Rights Reserved
 
-= Author
+## Author
 
 Daniel J. Berger

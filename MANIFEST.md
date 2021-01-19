@@ -1,6 +1,7 @@
-* CHANGES.rdoc
-* LICENSE.rdoc
-* MANIFEST.rdoc
+* CHANGES.md
+* Gemfile
+* LICENSE.md
+* MANIFEST.md
 * Rakefile
 * README
 * file-find.gemspec
