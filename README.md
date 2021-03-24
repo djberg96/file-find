@@ -1,3 +1,5 @@
+[![Ruby](https://github.com/djberg96/file-find/actions/workflows/ruby.yml/badge.svg)](https://github.com/djberg96/file-find/actions/workflows/ruby.yml)
+
 ## Description
 
 This is a drop-in replacement for the find module currently in the standard
