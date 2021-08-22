@@ -9,6 +9,9 @@ library. It is modeled on a typical 'find' command found on most Unix systems.
 
 `gem install file-find`
 
+## Adding the trusted cert
+`gem cert --add <(curl -Ls https://raw.githubusercontent.com/djberg96/file-find/main/certs/djberg96_pub.pem)`
+
 ## Synopsis
 ```ruby
   require 'file/find' # 'file-find' also works
