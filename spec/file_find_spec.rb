@@ -313,7 +313,7 @@ RSpec.describe File::Find do
 
   context "maxdepth", :maxdepth => true do
     before do
-      fs = FakeFS::FileSystem.add('a1/a2/a3')
+      FakeFS::FileSystem.add('a1/a2/a3')
       rule.pattern = "*.foo"
 
       FileUtils.touch('a1/a.foo')
@@ -364,7 +364,7 @@ RSpec.describe File::Find do
 
   context "mindepth", :mindepth => true do
     before do
-      fs = FakeFS::FileSystem.add('a1/a2/a3')
+      FakeFS::FileSystem.add('a1/a2/a3')
       rule.pattern = "*.min"
 
       FileUtils.touch('z.min')
