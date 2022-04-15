@@ -478,8 +478,8 @@ class File::Find
 
       who, what, how = match.to_a[1..-1]
 
-      who  = who.split(//).inject(0){ |num,b| num |= left[b]; num }
-      how  = how.split(//).inject(0){ |num,b| num |= right[b]; num }
+      who  = who.chars.inject(0){ |num, b| num |= left[b]; num }
+      how  = how.chars.inject(0){ |num, b| num |= right[b]; num }
       mask = who & how
 
       case what
