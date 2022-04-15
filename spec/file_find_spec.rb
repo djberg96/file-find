@@ -285,8 +285,8 @@ RSpec.describe File::Find do
       skip 'dirs with brackets example skipped on MS Windows' if windows
 
       # We use absolute paths here because of fakefs, which converts it anyway
-      bracket_files = ['/bracket/a[1]/a.foo', '/bracket/a [2] /b.foo', '/bracket/[a] b [c]/d.foo' ]
-      bracket_paths = ['/bracket/a[1]', '/bracket/a [2] ', '/bracket/[a] b [c]', '/bracket/[z] x' ]
+      bracket_files = ['/bracket/a[1]/a.foo', '/bracket/a [2] /b.foo', '/bracket/[a] b [c]/d.foo']
+      bracket_paths = ['/bracket/a[1]', '/bracket/a [2] ', '/bracket/[a] b [c]', '/bracket/[z] x']
 
       bracket_paths.each{ |e| FakeFS::FileSystem.add(e) }
       bracket_files.each{ |e| FileUtils.touch(e) }
