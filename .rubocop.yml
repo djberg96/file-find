@@ -62,4 +62,4 @@ Naming/RescuedExceptionsVariableName:
   PreferredName: 'err'
 Naming/FileName:
   Exclude:
-    - 'lib/sys-cpu.rb'
+    - 'lib/file-find.rb'
