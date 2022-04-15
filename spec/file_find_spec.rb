@@ -300,7 +300,7 @@ RSpec.describe File::Find do
 
       dir_rule = described_class.new(
         :ftype => 'directory',
-        :path => ['/bracket']
+        :path  => ['/bracket']
       )
 
       file_results = file_rule.find
