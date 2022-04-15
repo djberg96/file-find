@@ -1,5 +1,7 @@
 require: rubocop-rspec
 
+RSpec/ExampleLength:
+  Max: 10
 RSpec/MultipleExpectations:
   Max: 4
 RSpec/ContextWording:
