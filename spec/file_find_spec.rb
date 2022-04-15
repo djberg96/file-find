@@ -17,7 +17,6 @@ RSpec.describe File::Find do
   let(:windows)    { File::ALT_SEPARATOR }
   let(:ruby_file)  { 'file_find_test.rb' }
   let(:doc_file)   { 'file_find_test.doc' }
-  let(:text_file1) { 'file_find_test1.txt' }
   let(:text_file2) { 'file_find_test2.txt' }
 
   let(:rule) { described_class.new }
@@ -463,6 +462,8 @@ RSpec.describe File::Find do
   end
 
   context 'perm', :perm => true do
+    let(:text_file1) { 'file_find_test1.txt' }
+
     before do
       FileUtils.touch(ruby_file)
       FileUtils.touch(text_file1)
@@ -502,8 +503,10 @@ RSpec.describe File::Find do
   end
 
   context 'prune', :prune => true do
+    let(:prune_file) { 'file_find_test_prune.txt' }
+
     before do
-      FileUtils.touch(text_file1)
+      FileUtils.touch(prune_file)
     end
 
     example 'prune accessor basic functionality' do
@@ -517,7 +520,7 @@ RSpec.describe File::Find do
 
     example 'find method with prune option works as expected' do
       rule = described_class.new(:name => '*.txt', :prune => 'foo')
-      expect(File.basename(rule.find.first)).to eq(text_file1)
+      expect(File.basename(rule.find.first)).to eq(prune_file)
     end
   end
 
