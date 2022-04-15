@@ -20,8 +20,8 @@ RSpec.describe File::Find do
   let(:text_file1) { 'file_find_test1.txt' }
   let(:text_file2) { 'file_find_test2.txt' }
 
-  let(:rule) { File::Find.new }
-  let(:txt_rule) { File::Find.new(:name => '*.txt') }
+  let(:rule) { described_class.new }
+  let(:txt_rule) { described_class.new(:name => '*.txt') }
 
   before(:all) do
     @loguser = Sys::Admin.get_user(Sys::Admin.get_login)
@@ -72,8 +72,8 @@ RSpec.describe File::Find do
     end
 
     example "find with atime option works as expected" do
-      rule1 = File::Find.new(:name => "*.rb", :atime => 0)
-      rule2 = File::Find.new(:name => "*.rb", :atime => 1)
+      rule1 = described_class.new(:name => "*.rb", :atime => 0)
+      rule2 = described_class.new(:name => "*.rb", :atime => 1)
 
       expect(rule1.find.empty?).to be false
       expect(rule2.find.empty?).to be true
@@ -95,8 +95,8 @@ RSpec.describe File::Find do
     end
 
     example "find with ctime option works as expected" do
-      rule1 = File::Find.new(:name => "*.rb", :ctime => 0)
-      rule2 = File::Find.new(:name => "*.rb", :ctime => 1)
+      rule1 = described_class.new(:name => "*.rb", :ctime => 0)
+      rule2 = described_class.new(:name => "*.rb", :ctime => 1)
 
       expect(rule1.find.empty?).to be false
       expect(rule2.find.empty?).to be true
@@ -131,12 +131,12 @@ RSpec.describe File::Find do
     end
 
     example "valid filetest options work as expected" do
-      expect{ File::Find.new(:readable? => true) }.not_to raise_error
-      expect{ File::Find.new(:writable? => true) }.not_to raise_error
+      expect{ described_class.new(:readable? => true) }.not_to raise_error
+      expect{ described_class.new(:writable? => true) }.not_to raise_error
     end
 
     example "find method works with filetest option" do
-      rule = File::Find.new(:name => "*.doc", :writable? => true)
+      rule = described_class.new(:name => "*.doc", :writable? => true)
 
       expect(rule.find.map{ |f| File.basename(f) }).to eq([doc_file])
       FileUtils.chmod(0444, doc_file)
@@ -159,8 +159,8 @@ RSpec.describe File::Find do
     end
 
     example "find with mtime option works as expected" do
-      rule1 = File::Find.new(:name => "*.rb", :mtime => 0)
-      rule2 = File::Find.new(:name => "*.rb", :mtime => 1)
+      rule1 = described_class.new(:name => "*.rb", :mtime => 0)
+      rule2 = described_class.new(:name => "*.rb", :mtime => 1)
 
       expect(rule1.find.empty?).to be false
       expect(rule2.find.empty?).to be true
@@ -182,8 +182,8 @@ RSpec.describe File::Find do
     end
 
     example "ftype method works as expected" do
-      rule1 = File::Find.new(:name => "*.rb", :ftype => "file")
-      rule2 = File::Find.new(:name => "*.rb", :ftype => "characterSpecial")
+      rule1 = described_class.new(:name => "*.rb", :ftype => "file")
+      rule2 = described_class.new(:name => "*.rb", :ftype => "characterSpecial")
 
       expect(rule1.find.empty?).to be false
       expect(rule2.find.empty?).to be true
@@ -207,7 +207,7 @@ RSpec.describe File::Find do
     # TODO: Update example for Windows
     example "find with numeric group id works as expected" do
       skip 'group example skipped on MS Windows' if windows
-      rule = File::Find.new(:name => '*.doc', :group => @loguser.gid)
+      rule = described_class.new(:name => '*.doc', :group => @loguser.gid)
       expect(rule.find).to eq([File.expand_path(doc_file)])
     end
 
@@ -215,15 +215,15 @@ RSpec.describe File::Find do
     example "find with string group id works as expected" do
       skip 'group example skipped on MS Windows' if windows
 
-      rule = File::Find.new(:name => '*.doc', :group => @logroup.name)
+      rule = described_class.new(:name => '*.doc', :group => @logroup.name)
       expect(rule.find).to eq([File.expand_path(doc_file)])
     end
 
     example "find with bogus group returns empty results" do
       skip 'group test skipped on MS Windows' if windows
 
-      rule1 = File::Find.new(:name => '*.doc', :group => 'totallybogus')
-      rule2 = File::Find.new(:name => '*.doc', :group => 99999999)
+      rule1 = described_class.new(:name => '*.doc', :group => 'totallybogus')
+      rule2 = described_class.new(:name => '*.doc', :group => 99999999)
       expect(rule1.find).to eq([])
       expect(rule2.find).to eq([])
     end
@@ -269,8 +269,8 @@ RSpec.describe File::Find do
     example "links method returns expected result" do
       # skip if @@windows && !@@elevated # TODO: Update
 
-      rule1 = File::Find.new(:name => '*.rb', :links => 2)
-      rule2 = File::Find.new(:name => '*.doc', :links => 1)
+      rule1 = described_class.new(:name => '*.rb', :links => 2)
+      rule2 = described_class.new(:name => '*.doc', :links => 1)
 
       expect(rule1.find).to eq([])
       expect(rule2.find).to eq([File.expand_path(doc_file)])
@@ -293,12 +293,12 @@ RSpec.describe File::Find do
       bracket_paths.each{ |e| FakeFS::FileSystem.add(e) }
       bracket_files.each{ |e| FileUtils.touch(e) }
 
-      file_rule = File::Find.new(
+      file_rule = described_class.new(
         :ftype => 'file',
         :path  => ['/bracket']
       )
 
-      dir_rule = File::Find.new(
+      dir_rule = described_class.new(
         :ftype => 'directory',
         :path => ['/bracket']
       )
@@ -482,7 +482,7 @@ RSpec.describe File::Find do
     end
 
     example "perm method returns expected results" do
-      results = File::Find.new(:name => "*test1*", :perm => 0644).find
+      results = described_class.new(:name => "*test1*", :perm => 0644).find
 
       expect(results.length).to eq(1)
       expect(File.basename(results.first)).to eq(text_file1)
@@ -491,8 +491,8 @@ RSpec.describe File::Find do
     example "perm method works with symbolic permissions" do
       skip 'symbolic perm spec skipped on MS Windows' if windows
 
-      results1 = File::Find.new(:name => "file*", :perm => "g=rw").find
-      results2 = File::Find.new(:name => "file*", :perm => "u=rw").find
+      results1 = described_class.new(:name => "file*", :perm => "g=rw").find
+      results2 = described_class.new(:name => "file*", :perm => "u=rw").find
 
       expect(results1.length).to eq(1)
       expect(results2.length).to eq(2)
@@ -516,7 +516,7 @@ RSpec.describe File::Find do
     end
 
     example "find method with prune option works as expected" do
-      rule = File::Find.new(:name => "*.txt", :prune => 'foo')
+      rule = described_class.new(:name => "*.txt", :prune => 'foo')
       expect(File.basename(rule.find.first)).to eq(text_file1)
     end
   end
@@ -553,19 +553,19 @@ RSpec.describe File::Find do
         uid = @loguser.uid
       end
 
-      rule = File::Find.new(:name => '*.doc', :user => uid)
+      rule = described_class.new(:name => '*.doc', :user => uid)
       expect(rule.find).to eq([File.expand_path(doc_file)])
     end
 
     example "user method works with string as expected" do
       skip if windows && elevated
-      rule = File::Find.new(:name => '*.doc', :user => @loguser.name)
+      rule = described_class.new(:name => '*.doc', :user => @loguser.name)
       expect(rule.find).to eq([File.expand_path(doc_file)])
     end
 
     example "find method with user option using invalid user returns expected results" do
-      rule1 = File::Find.new(:name => '*.doc', :user => 'totallybogus')
-      rule2 = File::Find.new(:name => '*.doc', :user => 99999999)
+      rule1 = described_class.new(:name => '*.doc', :user => 'totallybogus')
+      rule2 = described_class.new(:name => '*.doc', :user => 99999999)
       expect(rule1.find).to eq([])
       expect(rule2.find).to eq([])
     end
@@ -578,12 +578,12 @@ RSpec.describe File::Find do
   end
 
   example "an error is raised if the path does not exist" do
-    expect{ File::Find.new(:path => '/bogus/dir').find }.to raise_error(Errno::ENOENT)
+    expect{ described_class.new(:path => '/bogus/dir').find }.to raise_error(Errno::ENOENT)
   end
 
   example "an error is raised if an invalid option is passed" do
-    expect{ File::Find.new(:bogus => 1) }.to raise_error(ArgumentError)
-    expect{ File::Find.new(:bogus? => true) }.to raise_error(ArgumentError)
+    expect{ described_class.new(:bogus => 1) }.to raise_error(ArgumentError)
+    expect{ described_class.new(:bogus? => true) }.to raise_error(ArgumentError)
   end
 
   context "eloop", :eloop => true do
@@ -601,7 +601,7 @@ RSpec.describe File::Find do
         File.symlink('eloop1', 'eloop0')
         expected = ['./eloop0', './eloop1']
 
-        results = File::Find.new(:path => '.', :follow => true).find
+        results = described_class.new(:path => '.', :follow => true).find
         expect(results.sort).to eq(expected)
       end
     end
