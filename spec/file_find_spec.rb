@@ -17,7 +17,6 @@ RSpec.describe File::Find do
   let(:windows)    { File::ALT_SEPARATOR }
   let(:ruby_file)  { 'file_find_test.rb' }
   let(:doc_file)   { 'file_find_test.doc' }
-  let(:text_file2) { 'file_find_test2.txt' }
 
   let(:rule) { described_class.new }
   let(:txt_rule) { described_class.new(:name => '*.txt') }
@@ -463,6 +462,7 @@ RSpec.describe File::Find do
 
   context 'perm', :perm => true do
     let(:text_file1) { 'file_find_test1.txt' }
+    let(:text_file2) { 'file_find_test2.txt' }
 
     before do
       FileUtils.touch(ruby_file)
