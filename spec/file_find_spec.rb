@@ -278,6 +278,9 @@ RSpec.describe File::Find do
   end
 
   context 'brackets', :brackets => true do
+    let(:file_rule){ described_class.new(:ftype => 'file', :path => ['/bracket']) }
+    let(:dir_rule){ described_class.new(:ftype => 'directory', :path => ['/bracket']) }
+
     before do
       allow(FakeFS::FileSystem).to receive(:find).and_call_original
       allow(FakeFS::FileSystem).to receive(:find).with(anything, 0, false)
@@ -292,16 +295,6 @@ RSpec.describe File::Find do
 
       bracket_paths.each{ |e| FakeFS::FileSystem.add(e) }
       bracket_files.each{ |e| FileUtils.touch(e) }
-
-      file_rule = described_class.new(
-        :ftype => 'file',
-        :path  => ['/bracket']
-      )
-
-      dir_rule = described_class.new(
-        :ftype => 'directory',
-        :path  => ['/bracket']
-      )
 
       file_results = file_rule.find
       dir_results = dir_rule.find
@@ -597,6 +590,10 @@ RSpec.describe File::Find do
       FakeFS.deactivate!
     end
 
+    after do
+      FakeFS.activate!
+    end
+
     # TODO: Update example for Windows
     example 'eloop handling works as expected' do
       skip 'eloop handling example skipped on MS Windows' if windows
@@ -609,10 +606,6 @@ RSpec.describe File::Find do
         results = described_class.new(:path => '.', :follow => true).find
         expect(results.sort).to eq(expected)
       end
-    end
-
-    after do
-      FakeFS.activate!
     end
   end
 end
