@@ -161,8 +161,7 @@ RSpec.describe File::Find do
     end
   end
 
-=begin
-  context 'ftype', :ftype => true do
+  context 'ftype', :ftype => true, :memfs => true do
     before do
       FileUtils.touch(ruby_file)
     end
@@ -185,7 +184,7 @@ RSpec.describe File::Find do
     end
   end
 
-  context 'group', :group => true do
+  context 'group', :group => true, :memfs => true do
     before do
       FileUtils.touch(doc_file)
     end
@@ -246,8 +245,10 @@ RSpec.describe File::Find do
     end
   end
 
-  context 'links', :links => true do
+  context 'links', :links => true, :memfs => true do
     before do
+      # Workaround until memfs adds nlink property
+      allow_any_instance_of(MemFs::File::Stat).to receive(:nlink).and_return(1)
       FileUtils.touch(ruby_file)
       FileUtils.touch(doc_file)
     end
@@ -272,6 +273,7 @@ RSpec.describe File::Find do
     end
   end
 
+=begin
   context 'brackets', :brackets => true do
     let(:file_rule){ described_class.new(:ftype => 'file', :path => ['/bracket']) }
     let(:dir_rule){ described_class.new(:ftype => 'directory', :path => ['/bracket']) }
