@@ -17,8 +17,12 @@ RSpec.describe File::Find do
   let(:txt_rule) { described_class.new(:name => '*.txt') }
 
   before(:all) do
-    @loguser = Sys::Admin.get_user(Sys::Admin.get_login)
-    @logroup = Sys::Admin.get_group(@loguser.gid)
+    @login_user = Sys::Admin.get_user(Sys::Admin.get_login)
+    begin
+      @login_group = Sys::Admin.get_group(@login_user.gid)
+    rescue Sys::Admin::Error
+      @login_group = Sys::Admin.get_group(@login_user.groups.first)
+    end
   end
 
   context 'constants', :constants => true do
@@ -201,7 +205,7 @@ RSpec.describe File::Find do
     # TODO: Update example for Windows
     example 'find with numeric group id works as expected' do
       skip 'group example skipped on MS Windows' if windows
-      rule = described_class.new(:name => '*.doc', :group => @loguser.gid)
+      rule = described_class.new(:name => '*.doc', :group => @login_user.gid)
       expect(rule.find).to eq([File.expand_path(doc_file)])
     end
 
@@ -209,7 +213,7 @@ RSpec.describe File::Find do
     example 'find with string group id works as expected' do
       skip 'group example skipped on MS Windows' if windows
 
-      rule = described_class.new(:name => '*.doc', :group => @logroup.name)
+      rule = described_class.new(:name => '*.doc', :group => @login_group.name)
       expect(rule.find).to eq([File.expand_path(doc_file)])
     end
 
@@ -537,9 +541,9 @@ RSpec.describe File::Find do
 
     example 'user method works with numeric id as expected' do
       if windows && elevated
-        uid = @loguser.gid # Windows assigns the group if any member is an admin
+        uid = @login_user.gid # Windows assigns the group if any member is an admin
       else
-        uid = @loguser.uid
+        uid = @login_user.uid
       end
 
       rule = described_class.new(:name => '*.doc', :user => uid)
@@ -548,7 +552,7 @@ RSpec.describe File::Find do
 
     example 'user method works with string as expected' do
       skip if windows && elevated
-      rule = described_class.new(:name => '*.doc', :user => @loguser.name)
+      rule = described_class.new(:name => '*.doc', :user => @login_user.name)
       expect(rule.find).to eq([File.expand_path(doc_file)])
     end
 
