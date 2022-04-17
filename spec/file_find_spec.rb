@@ -107,11 +107,11 @@ RSpec.describe File::Find do
       expect(rule.find{}).to be_nil
     end
   end
-=begin
 
-  context 'filetest', :filetest => true do
+  context 'filetest', :filetest => true, :memfs => true do
     before do
-      FileUtils.touch(doc_file, :mode => 0644)
+      FileUtils.touch(doc_file)
+      FileUtils.chmod(0644, doc_file)
     end
 
     example 'filetest accessor basic functionality' do
@@ -138,7 +138,7 @@ RSpec.describe File::Find do
     end
   end
 
-  context 'mtime', :mtime => true do
+  context 'mtime', :mtime => true, :memfs => true do
     before do
       FileUtils.touch(ruby_file)
     end
@@ -161,6 +161,7 @@ RSpec.describe File::Find do
     end
   end
 
+=begin
   context 'ftype', :ftype => true do
     before do
       FileUtils.touch(ruby_file)
