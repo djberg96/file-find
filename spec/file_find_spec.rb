@@ -294,11 +294,10 @@ RSpec.describe File::Find do
       expect(dir_results).to match_array(bracket_paths)
     end
   end
-=begin
 
-  context 'maxdepth', :maxdepth => true do
+  context 'maxdepth', :maxdepth => true, :memfs => true do
     before do
-      FakeFS::FileSystem.add('a1/a2/a3')
+      FileUtils.mkdir_p('a1/a2/a3')
       rule.pattern = '*.foo'
 
       FileUtils.touch('a1/a.foo')
@@ -347,9 +346,9 @@ RSpec.describe File::Find do
     end
   end
 
-  context 'mindepth', :mindepth => true do
+  context 'mindepth', :mindepth => true, :memfs => true do
     before do
-      FakeFS::FileSystem.add('a1/a2/a3')
+      FileUtils.mkdir_p('a1/a2/a3')
       rule.pattern = '*.min'
 
       FileUtils.touch('z.min')
@@ -447,7 +446,7 @@ RSpec.describe File::Find do
     end
   end
 
-  context 'perm', :perm => true do
+  context 'perm', :perm => true, :memfs => true do
     let(:text_file1) { 'file_find_test1.txt' }
     let(:text_file2) { 'file_find_test2.txt' }
 
@@ -489,7 +488,7 @@ RSpec.describe File::Find do
     end
   end
 
-  context 'prune', :prune => true do
+  context 'prune', :prune => true, :memfs => true do
     let(:prune_file) { 'file_find_test_prune.txt' }
 
     before do
@@ -521,6 +520,7 @@ RSpec.describe File::Find do
       expect(rule.size).to be_nil
     end
   end
+=begin
 
   context 'user', :user => true do
     before do
