@@ -4,8 +4,8 @@ require 'sys-admin'
 require 'tmpdir'
 require 'memfs'
 
-RSpec.configure do |c|
-  c.around(:each, memfs: true) do |example|
+RSpec.configure do |config|
+  config.around(:each, memfs: true) do |example|
     MemFs.activate { example.run }
   end
 end
