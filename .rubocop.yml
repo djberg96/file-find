@@ -1,5 +1,7 @@
 require: rubocop-rspec
 
+RSpec/ExampleLength:
+  Max: 10
 RSpec/MultipleExpectations:
   Max: 4
 RSpec/ContextWording:
@@ -7,6 +9,8 @@ RSpec/ContextWording:
 RSpec/FilePath:
   SpecSuffixOnly: true
 RSpec/InstanceVariable:
+  Enabled: false
+RSpec/BeforeAfterAll:
   Enabled: false
 
 AllCops:
@@ -32,6 +36,10 @@ Style/HashSyntax:
   EnforcedStyle: hash_rockets
 Style/IfUnlessModifier:
   Enabled: false
+Style/NumericLiterals:
+  Enabled: false
+Style/NumericLiteralPrefix:
+  Enabled: false
 Style/RedundantBegin:
   Enabled: false   
 Style/SafeNavigation:
@@ -40,7 +48,11 @@ Layout/EmptyLineAfterGuardClause:
   Enabled: false
 Layout/CaseIndentation:
   IndentOneStep: true
+Layout/HashAlignment:
+  EnforcedHashRocketStyle: table
 Layout/SpaceBeforeBlockBraces:
+  Enabled: false
+Layout/SpaceInsideHashLiteralBraces:
   Enabled: false
 Metrics/AbcSize:
   Enabled: false
@@ -58,4 +70,4 @@ Naming/RescuedExceptionsVariableName:
   PreferredName: 'err'
 Naming/FileName:
   Exclude:
-    - 'lib/sys-cpu.rb'
+    - 'lib/file-find.rb'
