@@ -273,15 +273,9 @@ RSpec.describe File::Find do
     end
   end
 
-=begin
-  context 'brackets', :brackets => true do
+  context 'brackets', :brackets => true, :memfs => true do
     let(:file_rule){ described_class.new(:ftype => 'file', :path => ['/bracket']) }
     let(:dir_rule){ described_class.new(:ftype => 'directory', :path => ['/bracket']) }
-
-    before do
-      allow(FakeFS::FileSystem).to receive(:find).and_call_original
-      allow(FakeFS::FileSystem).to receive(:find).with(anything, 0, false)
-    end
 
     example 'find method works on dirs that contain brackets' do
       skip 'dirs with brackets example skipped on MS Windows' if windows
@@ -290,8 +284,8 @@ RSpec.describe File::Find do
       bracket_files = ['/bracket/a[1]/a.foo', '/bracket/a [2] /b.foo', '/bracket/[a] b [c]/d.foo']
       bracket_paths = ['/bracket/a[1]', '/bracket/a [2] ', '/bracket/[a] b [c]', '/bracket/[z] x']
 
-      bracket_paths.each{ |e| FakeFS::FileSystem.add(e) }
-      bracket_files.each{ |e| FileUtils.touch(e) }
+      bracket_paths.each{ |e| FileUtils.mkdir_p(e) }
+      bracket_files.each{ |e| MemFs.touch(e) }
 
       file_results = file_rule.find
       dir_results = dir_rule.find
@@ -300,6 +294,7 @@ RSpec.describe File::Find do
       expect(dir_results).to match_array(bracket_paths)
     end
   end
+=begin
 
   context 'maxdepth', :maxdepth => true do
     before do
