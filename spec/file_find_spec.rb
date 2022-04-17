@@ -574,19 +574,8 @@ RSpec.describe File::Find do
     expect{ described_class.new(:bogus => 1) }.to raise_error(ArgumentError)
     expect{ described_class.new(:bogus? => true) }.to raise_error(ArgumentError)
   end
-=begin
 
   context 'eloop', :eloop => true do
-    # Have to disable fakefs for this test because of bug: https://github.com/fakefs/fakefs/issues/459
-    before do
-      FakeFS.deactivate!
-    end
-
-    after do
-      FakeFS.activate!
-    end
-
-    # TODO: Update example for Windows
     example 'eloop handling works as expected' do
       skip 'eloop handling example skipped on MS Windows' if windows
 
@@ -600,5 +589,4 @@ RSpec.describe File::Find do
       end
     end
   end
-=end
 end
