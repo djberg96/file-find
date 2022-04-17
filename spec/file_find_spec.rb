@@ -520,9 +520,8 @@ RSpec.describe File::Find do
       expect(rule.size).to be_nil
     end
   end
-=begin
 
-  context 'user', :user => true do
+  context 'user', :user => true, :memfs => true do
     before do
       FileUtils.touch(doc_file)
     end
@@ -575,6 +574,7 @@ RSpec.describe File::Find do
     expect{ described_class.new(:bogus => 1) }.to raise_error(ArgumentError)
     expect{ described_class.new(:bogus? => true) }.to raise_error(ArgumentError)
   end
+=begin
 
   context 'eloop', :eloop => true do
     # Have to disable fakefs for this test because of bug: https://github.com/fakefs/fakefs/issues/459
