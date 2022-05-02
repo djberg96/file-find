@@ -251,11 +251,11 @@ class File::Find
             glob.tr!(File::ALT_SEPARATOR, File::SEPARATOR)
           end
 
-          if @mount && !(stat_info.dev == @filesystem)
+          if @mount && stat_info.dev != @filesystem
             next
           end
 
-          if @links && !(stat_info.nlink == @links)
+          if @links && stat_info.nlink != @links
             next
           end
 
@@ -327,7 +327,7 @@ class File::Find
             end
           end
 
-          if @ftype && !(File.ftype(file) == @ftype)
+          if @ftype && File.ftype(file) != @ftype
             next
           end
 
@@ -351,7 +351,7 @@ class File::Find
             end
           end
 
-          if @inum && !(stat_info.ino == @inum)
+          if @inum && stat_info.ino != @inum
             next
           end
 
