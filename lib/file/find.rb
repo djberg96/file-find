@@ -222,8 +222,8 @@ class File::Find
           next if file == '.'
           next if file == '..'
 
-          if prune_regex
-            next if prune_regex.match(file)
+          if prune_regex && prune_regex.match(file)
+            next
           end
 
           file = File.join(path, file)
@@ -251,12 +251,12 @@ class File::Find
             glob.tr!(File::ALT_SEPARATOR, File::SEPARATOR)
           end
 
-          if @mount
-            next unless stat_info.dev == @filesystem
+          if @mount && !(stat_info.dev == @filesystem)
+            next
           end
 
-          if @links
-            next unless stat_info.nlink == @links
+          if @links && !(stat_info.nlink == @links)
+            next
           end
 
           if @maxdepth || @mindepth
@@ -267,21 +267,17 @@ class File::Find
             depth = file_depth - path_depth
 
             if @maxdepth && (depth > @maxdepth)
-              if File.directory?(file)
-                unless paths.include?(file) && depth > @maxdepth
+              if File.directory?(file) && !(paths.include?(file) && depth > @maxdepth)
                   paths << file
                 end
-              end
 
               next
             end
 
             if @mindepth && (depth < @mindepth)
-              if File.directory?(file)
-                unless paths.include?(file) && depth < @mindepth
+              if File.directory?(file) && !(paths.include?(file) && depth < @mindepth)
                   paths << file
                 end
-              end
 
               next
             end
@@ -290,8 +286,8 @@ class File::Find
           # Add directories back onto the list of paths to search unless
           # they've already been added
           #
-          if stat_info.directory?
-            paths << file unless paths.include?(file)
+          if stat_info.directory? && !paths.include?(file)
+            paths << file
           end
 
           next unless Dir[glob].include?(file)
@@ -331,8 +327,8 @@ class File::Find
             end
           end
 
-          if @ftype
-            next unless File.ftype(file) == @ftype
+          if @ftype && !(File.ftype(file) == @ftype)
+            next
           end
 
           if @group
@@ -355,8 +351,8 @@ class File::Find
             end
           end
 
-          if @inum
-            next unless stat_info.ino == @inum
+          if @inum && !(stat_info.ino == @inum)
+            next
           end
 
           # Note that only 0644 and 0444 are supported on MS Windows.
