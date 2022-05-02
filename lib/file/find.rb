@@ -365,7 +365,7 @@ class File::Find
               octal_perm = sym2oct(@perm)
               next unless stat_info.mode & octal_perm == octal_perm
             else
-              next unless sprintf('%o', stat_info.mode & 07777) == sprintf('%o', @perm)
+              next unless format('%o', stat_info.mode & 07777) == format('%o', @perm)
             end
           end
 
