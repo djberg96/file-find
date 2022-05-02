@@ -9,6 +9,8 @@ rescue LoadError
   # Do nothing, not required, just nicer.
 end
 
+# The File::Find class encapsulates 'rules' that you create and use to find
+# files on your filesystem.
 class File::Find
   # The version of the file-find library
   VERSION = '0.5.0'
