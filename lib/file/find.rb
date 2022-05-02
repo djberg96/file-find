@@ -268,17 +268,15 @@ class File::Find
 
             if @maxdepth && (depth > @maxdepth)
               if File.directory?(file) && !(paths.include?(file) && depth > @maxdepth)
-                  paths << file
-                end
-
+                paths << file
+              end
               next
             end
 
             if @mindepth && (depth < @mindepth)
               if File.directory?(file) && !(paths.include?(file) && depth < @mindepth)
-                  paths << file
-                end
-
+                paths << file
+              end
               next
             end
           end
