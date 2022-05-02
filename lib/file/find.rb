@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'date'
 require 'sys/admin'
 
@@ -9,7 +11,7 @@ end
 
 class File::Find
   # The version of the file-find library
-  VERSION = '0.5.0'.freeze
+  VERSION = '0.5.0'
 
   # :stopdoc:
   VALID_OPTIONS = %w[
