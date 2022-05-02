@@ -31,7 +31,7 @@ class File::Find
     prune
     size
     user
-  ]
+  ].freeze
   # :startdoc:
 
   # The starting path(s) for the search. The default is the current directory.
