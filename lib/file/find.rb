@@ -216,9 +216,9 @@ class File::Find
       prune_regex = nil
     end
 
-    paths.each{ |path|
+    paths.each do |path|
       begin
-        Dir.foreach(path){ |file|
+        Dir.foreach(path) do |file|
           next if file == '.'
           next if file == '..'
 
@@ -299,7 +299,7 @@ class File::Find
           unless @filetest.empty?
             file_test = true
 
-            @filetest.each{ |array|
+            @filetest.each do |array|
               meth = array[0]
               bool = array[1]
 
@@ -307,7 +307,7 @@ class File::Find
                 file_test = false
                 break
               end
-            }
+            end
 
             next unless file_test
           end
@@ -415,11 +415,11 @@ class File::Find
           end
 
           @previous = file unless @previous == file
-        }
+        end
       rescue Errno::EACCES
         next # Skip inaccessible directories
       end
-    }
+    end
 
     block_given? ? nil : results
   end
