@@ -220,6 +220,7 @@ class File::Find
       prune_regex = nil
     end
 
+    # rubocop:disable Metrics/BlockLength
     paths.each do |path|
       begin
         Dir.foreach(path) do |file|
@@ -418,6 +419,7 @@ class File::Find
         next # Skip inaccessible directories
       end
     end
+    # rubocop:enable Metrics/BlockLength
 
     block_given? ? nil : results
   end
