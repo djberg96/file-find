@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'date'
 require 'sys/admin'
 
@@ -7,9 +9,11 @@ rescue LoadError
   # Do nothing, not required, just nicer.
 end
 
+# The File::Find class encapsulates 'rules' that you create and use to find
+# files on your filesystem.
 class File::Find
   # The version of the file-find library
-  VERSION = '0.5.0'.freeze
+  VERSION = '0.5.0'
 
   # :stopdoc:
   VALID_OPTIONS = %w[
@@ -31,7 +35,7 @@ class File::Find
     prune
     size
     user
-  ]
+  ].freeze
   # :startdoc:
 
   # The starting path(s) for the search. The default is the current directory.
@@ -216,14 +220,15 @@ class File::Find
       prune_regex = nil
     end
 
-    paths.each{ |path|
+    # rubocop:disable Metrics/BlockLength
+    paths.each do |path|
       begin
-        Dir.foreach(path){ |file|
+        Dir.foreach(path) do |file|
           next if file == '.'
           next if file == '..'
 
-          if prune_regex
-            next if prune_regex.match(file)
+          if prune_regex && prune_regex.match(file)
+            next
           end
 
           file = File.join(path, file)
@@ -251,12 +256,12 @@ class File::Find
             glob.tr!(File::ALT_SEPARATOR, File::SEPARATOR)
           end
 
-          if @mount
-            next unless stat_info.dev == @filesystem
+          if @mount && stat_info.dev != @filesystem
+            next
           end
 
-          if @links
-            next unless stat_info.nlink == @links
+          if @links && stat_info.nlink != @links
+            next
           end
 
           if @maxdepth || @mindepth
@@ -267,22 +272,16 @@ class File::Find
             depth = file_depth - path_depth
 
             if @maxdepth && (depth > @maxdepth)
-              if File.directory?(file)
-                unless paths.include?(file) && depth > @maxdepth
-                  paths << file
-                end
+              if File.directory?(file) && !(paths.include?(file) && depth > @maxdepth)
+                paths << file
               end
-
               next
             end
 
             if @mindepth && (depth < @mindepth)
-              if File.directory?(file)
-                unless paths.include?(file) && depth < @mindepth
-                  paths << file
-                end
+              if File.directory?(file) && !(paths.include?(file) && depth < @mindepth)
+                paths << file
               end
-
               next
             end
           end
@@ -290,8 +289,8 @@ class File::Find
           # Add directories back onto the list of paths to search unless
           # they've already been added
           #
-          if stat_info.directory?
-            paths << file unless paths.include?(file)
+          if stat_info.directory? && !paths.include?(file)
+            paths << file
           end
 
           next unless Dir[glob].include?(file)
@@ -299,7 +298,7 @@ class File::Find
           unless @filetest.empty?
             file_test = true
 
-            @filetest.each{ |array|
+            @filetest.each do |array|
               meth = array[0]
               bool = array[1]
 
@@ -307,7 +306,7 @@ class File::Find
                 file_test = false
                 break
               end
-            }
+            end
 
             next unless file_test
           end
@@ -331,8 +330,8 @@ class File::Find
             end
           end
 
-          if @ftype
-            next unless File.ftype(file) == @ftype
+          if @ftype && File.ftype(file) != @ftype
+            next
           end
 
           if @group
@@ -355,8 +354,8 @@ class File::Find
             end
           end
 
-          if @inum
-            next unless stat_info.ino == @inum
+          if @inum && stat_info.ino != @inum
+            next
           end
 
           # Note that only 0644 and 0444 are supported on MS Windows.
@@ -365,7 +364,7 @@ class File::Find
               octal_perm = sym2oct(@perm)
               next unless stat_info.mode & octal_perm == octal_perm
             else
-              next unless sprintf("%o", stat_info.mode & 07777) == sprintf("%o", @perm)
+              next unless format('%o', stat_info.mode & 07777) == format('%o', @perm)
             end
           end
 
@@ -415,11 +414,12 @@ class File::Find
           end
 
           @previous = file unless @previous == file
-        }
+        end
       rescue Errno::EACCES
         next # Skip inaccessible directories
       end
-    }
+    end
+    # rubocop:enable Metrics/BlockLength
 
     block_given? ? nil : results
   end
@@ -478,8 +478,8 @@ class File::Find
 
       who, what, how = match.to_a[1..-1]
 
-      who  = who.chars.inject(0){ |num, b| num |= left[b] }
-      how  = how.chars.inject(0){ |num, b| num |= right[b] }
+      who  = who.chars.inject(0){ |num, b| num | left[b] }
+      how  = how.chars.inject(0){ |num, b| num | right[b] }
       mask = who & how
 
       case what
