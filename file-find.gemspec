@@ -13,12 +13,13 @@ Gem::Specification.new do |spec|
   spec.cert_chain = Dir['certs/*']
 
   spec.metadata = {
-    'homepage_uri'      => 'https://github.com/djberg96/file-find',
-    'bug_tracker_uri'   => 'https://github.com/djberg96/file-find/issues',
-    'changelog_uri'     => 'https://github.com/djberg96/file-find/blob/main/CHANGES.md',
-    'documentation_uri' => 'https://github.com/djberg96/file-find/wiki',
-    'source_code_uri'   => 'https://github.com/djberg96/file-find',
-    'wiki_uri'          => 'https://github.com/djberg96/file-find/wiki'
+    'homepage_uri'          => 'https://github.com/djberg96/file-find',
+    'bug_tracker_uri'       => 'https://github.com/djberg96/file-find/issues',
+    'changelog_uri'         => 'https://github.com/djberg96/file-find/blob/main/CHANGES.md',
+    'documentation_uri'     => 'https://github.com/djberg96/file-find/wiki',
+    'source_code_uri'       => 'https://github.com/djberg96/file-find',
+    'wiki_uri'              => 'https://github.com/djberg96/file-find/wiki',
+    'rubygems_mfa_required' => 'true'
   }
 
   spec.add_dependency('sys-admin', '~> 1.7')
