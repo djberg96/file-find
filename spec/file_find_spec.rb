@@ -9,7 +9,6 @@
 require 'rspec'
 require 'file-find'
 require 'sys-admin'
-require 'pp' # stops fakefs class mismatch errors
 require 'tmpdir'
 require 'fakefs/spec_helpers'
 
@@ -110,7 +109,7 @@ RSpec.describe File::Find do
     end
 
     example 'find method returns expected value' do
-      expect(rule.find).to be_kind_of(Array)
+      expect(rule.find).to be_a(Array)
       expect(rule.find{}).to be_nil
     end
   end
@@ -127,7 +126,7 @@ RSpec.describe File::Find do
     end
 
     example 'filetest method returns expected value' do
-      expect(rule.filetest).to be_kind_of(Array)
+      expect(rule.filetest).to be_a(Array)
     end
 
     example 'valid filetest options work as expected' do
@@ -332,7 +331,7 @@ RSpec.describe File::Find do
       expect(rule.find.map{ |e| File.basename(e) }).to eq(['a.foo'])
 
       rule.maxdepth = 3
-      expect(rule.find.map{ |e| File.basename(e) }).to match_array(['a.foo', 'b.foo', 'c.foo'])
+      expect(rule.find.map{ |e| File.basename(e) }).to contain_exactly('a.foo', 'b.foo', 'c.foo')
     end
 
     example 'find with nil maxdepth option returns everything' do

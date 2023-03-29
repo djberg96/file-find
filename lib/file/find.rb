@@ -265,7 +265,7 @@ class File::Find
           end
 
           if @maxdepth || @mindepth
-            file_depth = file.split(File::SEPARATOR).reject{ |e| e.size.zero? }.length
+            file_depth = file.split(File::SEPARATOR).reject(&:empty?).length
             current_base_path = [@path].flatten.find{ |tpath| file.include?(tpath) }
             path_depth = current_base_path.split(File::SEPARATOR).length
 
@@ -476,7 +476,7 @@ class File::Find
       match = cmd.match(regex)
       raise "Invalid symbolic permissions: '#{str}'" if match.nil?
 
-      who, what, how = match.to_a[1..-1]
+      who, what, how = match.to_a[1..]
 
       who  = who.chars.inject(0){ |num, b| num | left[b] }
       how  = how.chars.inject(0){ |num, b| num | right[b] }
