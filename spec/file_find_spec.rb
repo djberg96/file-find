@@ -27,14 +27,14 @@ RSpec.describe File::Find do
     @logroup = Sys::Admin.get_group(@loguser.gid)
   end
 
-  context 'constants', :constants => true do
+  context 'constants', :constants do
     example 'version constant is set to expected value' do
       expect(File::Find::VERSION).to eq('0.5.0')
       expect(File::Find::VERSION).to be_frozen
     end
   end
 
-  context 'path', :path => true do
+  context 'path', :path do
     example 'path accessor basic functionality' do
       expect(rule).to respond_to(:path)
       expect(rule).to respond_to(:path=)
@@ -45,7 +45,7 @@ RSpec.describe File::Find do
     end
   end
 
-  context 'options', :options => true do
+  context 'options', :options do
     example 'options accessor basic functionality' do
       expect(rule).to respond_to(:options)
       expect(rule).to respond_to(:options=)
@@ -56,7 +56,7 @@ RSpec.describe File::Find do
     end
   end
 
-  context 'atime', :atime => true do
+  context 'atime', :atime do
     before do
       FileUtils.touch(ruby_file)
     end
@@ -79,7 +79,7 @@ RSpec.describe File::Find do
     end
   end
 
-  context 'ctime', :ctime => true do
+  context 'ctime', :ctime do
     before do
       FileUtils.touch(ruby_file)
     end
@@ -102,7 +102,7 @@ RSpec.describe File::Find do
     end
   end
 
-  context 'find', :find => true do
+  context 'find', :find do
     example 'find method basic functionality' do
       expect(rule).to respond_to(:find)
       expect{ rule.find }.not_to raise_error
@@ -114,7 +114,7 @@ RSpec.describe File::Find do
     end
   end
 
-  context 'filetest', :filetest => true do
+  context 'filetest', :filetest do
     before do
       FileUtils.touch(doc_file, :mode => 0644)
     end
@@ -143,7 +143,7 @@ RSpec.describe File::Find do
     end
   end
 
-  context 'mtime', :mtime => true do
+  context 'mtime', :mtime do
     before do
       FileUtils.touch(ruby_file)
     end
@@ -166,7 +166,7 @@ RSpec.describe File::Find do
     end
   end
 
-  context 'ftype', :ftype => true do
+  context 'ftype', :ftype do
     before do
       FileUtils.touch(ruby_file)
     end
@@ -189,7 +189,7 @@ RSpec.describe File::Find do
     end
   end
 
-  context 'group', :group => true do
+  context 'group', :group do
     before do
       FileUtils.touch(doc_file)
     end
@@ -228,7 +228,7 @@ RSpec.describe File::Find do
     end
   end
 
-  context 'inum', :inum => true do
+  context 'inum', :inum do
     example 'inum accessor basic functionality' do
       expect(rule).to respond_to(:inum)
       expect(rule).to respond_to(:inum=)
@@ -239,7 +239,7 @@ RSpec.describe File::Find do
     end
   end
 
-  context 'follow', :follow => true do
+  context 'follow', :follow do
     example 'follow accessor basic functionality' do
       expect(rule).to respond_to(:follow)
       expect(rule).to respond_to(:follow=)
@@ -250,7 +250,7 @@ RSpec.describe File::Find do
     end
   end
 
-  context 'links', :links => true do
+  context 'links', :links do
     before do
       FileUtils.touch(ruby_file)
       FileUtils.touch(doc_file)
@@ -276,7 +276,7 @@ RSpec.describe File::Find do
     end
   end
 
-  context 'brackets', :brackets => true do
+  context 'brackets', :brackets do
     let(:file_rule){ described_class.new(:ftype => 'file', :path => ['/bracket']) }
     let(:dir_rule){ described_class.new(:ftype => 'directory', :path => ['/bracket']) }
 
@@ -303,7 +303,7 @@ RSpec.describe File::Find do
     end
   end
 
-  context 'maxdepth', :maxdepth => true do
+  context 'maxdepth', :maxdepth do
     before do
       FakeFS::FileSystem.add('a1/a2/a3')
       rule.pattern = '*.foo'
@@ -354,7 +354,7 @@ RSpec.describe File::Find do
     end
   end
 
-  context 'mindepth', :mindepth => true do
+  context 'mindepth', :mindepth do
     before do
       FakeFS::FileSystem.add('a1/a2/a3')
       rule.pattern = '*.min'
@@ -427,7 +427,7 @@ RSpec.describe File::Find do
     end
   end
 
-  context 'mount', :mount => true do
+  context 'mount', :mount do
     example 'mount accessor basic functionality' do
       expect(rule).to respond_to(:mount)
       expect(rule).to respond_to(:mount=)
@@ -438,7 +438,7 @@ RSpec.describe File::Find do
     end
   end
 
-  context 'name', :name => true do
+  context 'name', :name do
     example 'name accessor basic functionality' do
       expect(rule).to respond_to(:name)
       expect(rule).to respond_to(:name=)
@@ -454,7 +454,7 @@ RSpec.describe File::Find do
     end
   end
 
-  context 'perm', :perm => true do
+  context 'perm', :perm do
     let(:text_file1) { 'file_find_test1.txt' }
     let(:text_file2) { 'file_find_test2.txt' }
 
@@ -496,7 +496,7 @@ RSpec.describe File::Find do
     end
   end
 
-  context 'prune', :prune => true do
+  context 'prune', :prune do
     let(:prune_file) { 'file_find_test_prune.txt' }
 
     before do
@@ -518,7 +518,7 @@ RSpec.describe File::Find do
     end
   end
 
-  context 'size', :size => true do
+  context 'size', :size do
     example 'size accessor basic functionality' do
       expect(rule).to respond_to(:size)
       expect(rule).to respond_to(:size=)
@@ -529,7 +529,7 @@ RSpec.describe File::Find do
     end
   end
 
-  context 'user', :user => true do
+  context 'user', :user do
     before do
       FileUtils.touch(doc_file)
     end
@@ -568,7 +568,7 @@ RSpec.describe File::Find do
     end
   end
 
-  context 'previous', :previous => true do
+  context 'previous', :previous do
     example 'previous method basic functionality' do
       expect(rule).to respond_to(:previous)
     end
@@ -583,7 +583,7 @@ RSpec.describe File::Find do
     expect{ described_class.new(:bogus? => true) }.to raise_error(ArgumentError)
   end
 
-  context 'eloop', :eloop => true do
+  context 'eloop', :eloop do
     # Have to disable fakefs for this test because of bug: https://github.com/fakefs/fakefs/issues/459
     before do
       FakeFS.deactivate!

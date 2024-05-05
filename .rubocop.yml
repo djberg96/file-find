@@ -12,6 +12,8 @@ RSpec/InstanceVariable:
   Enabled: false
 RSpec/BeforeAfterAll:
   Enabled: false
+RSpec/IndexedLet:
+  Enabled: false
 
 AllCops:
   NewCops: enable
@@ -57,7 +59,7 @@ Layout/SpaceInsideHashLiteralBraces:
 Metrics/AbcSize:
   Enabled: false
 Metrics/BlockLength:
-  IgnoredMethods: ['describe', 'context']
+  AllowedMethods: ['describe', 'context']
 Metrics/BlockNesting:
   Enabled: false  
 Metrics/ClassLength:
