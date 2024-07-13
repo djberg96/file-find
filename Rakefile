@@ -3,7 +3,7 @@ require 'rake/clean'
 require 'rspec/core/rake_task'
 require 'rubocop/rake_task'
 
-CLEAN.include("**/*.gem", "**/*.rbc", "**/link*")
+CLEAN.include("**/*.gem", "**/*.rbc", "**/link*", "*.lock")
 
 namespace :gem do
   desc 'Create the file-find gem'
