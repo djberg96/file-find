@@ -28,4 +28,9 @@ RSpec::Core::RakeTask.new(:spec) do |t|
   t.pattern = ['spec/file_find_spec.rb']
 end
 
+# Clean up afterwards
+Rake::Task[:spec].enhance do
+  Rake::Task[:clean].invoke
+end
+
 task :default => :spec
