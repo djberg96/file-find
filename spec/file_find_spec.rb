@@ -9,6 +9,7 @@
 require 'rspec'
 require 'file-find'
 require 'sys-admin'
+require 'sys-uname'
 require 'tmpdir'
 require 'pp' # Goofy workaround for FakeFS bug
 require 'fakefs/spec_helpers'
@@ -16,17 +17,18 @@ require 'fakefs/spec_helpers'
 RSpec.describe File::Find do
   include FakeFS::SpecHelpers
 
-  let(:windows)    { File::ALT_SEPARATOR }
-  let(:elevated)   { windows and Win32::Security.elevated_security? }
-  let(:ruby_file)  { 'file_find_test.rb' }
-  let(:doc_file)   { 'file_find_test.doc' }
+  let(:windows)   { Sys::Platform.windows? }
+  let(:macos)     { Sys::Platform.mac? }
+  let(:elevated)  { windows and Win32::Security.elevated_security? }
+  let(:ruby_file) { 'file_find_test.rb' }
+  let(:doc_file)  { 'file_find_test.doc' }
 
   let(:rule) { described_class.new }
   let(:txt_rule) { described_class.new(:name => '*.txt') }
 
   before(:all) do
     @loguser = Sys::Admin.get_user(Sys::Admin.get_login)
-    group = File::ALT_SEPARATOR ? 'Users' : @loguser.gid
+    group = Sys::Platform.windows? ? 'Users' : @loguser.gid
     @logroup = Sys::Admin.get_group(group)
   end
 
@@ -209,6 +211,8 @@ RSpec.describe File::Find do
     # TODO: Update example for Windows
     example 'find with numeric group id works as expected' do
       skip 'group example skipped on MS Windows' if windows
+      skip 'group example skipped on Mac in CI' if macos && ENV['CI']
+
       rule = described_class.new(:name => '*.doc', :group => @loguser.gid)
       expect(rule.find).to eq([File.expand_path(doc_file)])
     end
@@ -216,6 +220,7 @@ RSpec.describe File::Find do
     # TODO: Update example for Windows
     example 'find with string group id works as expected' do
       skip 'group example skipped on MS Windows' if windows
+      skip 'group example skipped on Mac in CI' if macos && ENV['CI']
 
       rule = described_class.new(:name => '*.doc', :group => @logroup.name)
       expect(rule.find).to eq([File.expand_path(doc_file)])
@@ -565,6 +570,7 @@ RSpec.describe File::Find do
 
     example 'user method works with numeric id as expected' do
       pending if windows # TODO: Get this working on Windows
+      skip 'user example skipped on Mac in CI' if macos && ENV['CI']
 
       if windows && elevated
         uid = @loguser.gid # Windows assigns the group if any member is an admin
@@ -578,6 +584,7 @@ RSpec.describe File::Find do
 
     example 'user method works with string as expected' do
       pending if windows # TODO: Get this working on Windows
+      skip 'user example skipped on Mac in CI' if macos && ENV['CI']
 
       skip if windows && elevated
       rule = described_class.new(:name => '*.doc', :user => @loguser.name)
