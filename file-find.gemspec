@@ -23,8 +23,9 @@ Gem::Specification.new do |spec|
   }
 
   spec.add_dependency('sys-admin', '~> 1.7')
-  spec.add_development_dependency('rspec', '~> 3.9')
-  spec.add_development_dependency('fakefs', '~> 1.3')
+
+  spec.add_development_dependency('rspec')
+  spec.add_development_dependency('fakefs')
   spec.add_development_dependency('rake')
   spec.add_development_dependency('rubocop')
   spec.add_development_dependency('rubocop-rspec')
