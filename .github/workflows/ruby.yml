@@ -20,10 +20,10 @@ jobs:
     runs-on: ${{ matrix.platform }}
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Ruby
+    - name: Setup Ruby
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby-version }}
         bundler-cache: true
-    - name: Run tests
+    - name: Run specs
       run: bundle exec rake
