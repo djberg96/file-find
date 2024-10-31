@@ -26,4 +26,6 @@ jobs:
         ruby-version: ${{ matrix.ruby-version }}
         bundler-cache: true
     - name: Run specs
-      run: bundle exec rake
+      run: |
+        bundle install --quiet
+        bundle exec rake
