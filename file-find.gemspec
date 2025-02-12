@@ -31,8 +31,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency('rubocop')
   spec.add_development_dependency('rubocop-rspec')
 
-  spec.required_ruby_version = '>= 3.0'
-
   spec.description = <<-EOF
     The file-find library provides a better, more object oriented approach
     to finding files. It allows you to find files based on a variety of
