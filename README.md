@@ -9,6 +9,11 @@ library. It is modeled on a typical 'find' command found on most Unix systems.
 
 `gem install file-find`
 
+## Specs
+
+Although this gem will work with Ruby 2.x or 3.x, you will need Ruby 3.x to
+run the specs locally because of development dependencies.
+
 ## Adding the trusted cert
 `gem cert --add <(curl -Ls https://raw.githubusercontent.com/djberg96/file-find/main/certs/djberg96_pub.pem)`
 
