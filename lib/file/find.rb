@@ -224,9 +224,9 @@ class File::Find
 
     # rubocop:disable Metrics/BlockLength
     paths.each do |path|
-      threads << Thread.new do |t|
-        begin
-          Dir.foreach(path) do |file|
+      begin
+        Dir.foreach(path) do |file|
+          threads << Thread.new do |t|
             next if file == '.'
             next if file == '..'
 
@@ -421,8 +421,8 @@ class File::Find
         rescue Errno::EACCES
           next # Skip inaccessible directories
         end
+        threads.map(&:join)
       end
-      threads.map(&:join)
     end
     # rubocop:enable Metrics/BlockLength
 
