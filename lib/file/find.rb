@@ -225,8 +225,8 @@ class File::Find
     # rubocop:disable Metrics/BlockLength
     paths.each do |path|
       begin
-        Dir.foreach(path) do |file|
-          threads << Thread.new do |t|
+        Dir.foreach(path) do |f|
+          threads << Thread.new(f) do |file|
             next if file == '.'
             next if file == '..'
 
