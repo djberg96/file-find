@@ -220,204 +220,209 @@ class File::Find
       prune_regex = nil
     end
 
+    threads = []
+
     # rubocop:disable Metrics/BlockLength
     paths.each do |path|
-      begin
-        Dir.foreach(path) do |file|
-          next if file == '.'
-          next if file == '..'
+      threads << Thread.new do |t|
+        begin
+          Dir.foreach(path) do |file|
+            next if file == '.'
+            next if file == '..'
 
-          if prune_regex && prune_regex.match(file)
-            next
-          end
-
-          file = File.join(path, file)
-
-          stat_method = @follow ? :stat : :lstat
-          # Skip files we cannot access, stale links, etc.
-          begin
-            stat_info = File.send(stat_method, file)
-          rescue Errno::ENOENT, Errno::EACCES
-            next
-          rescue Errno::ELOOP
-            if stat_method.to_s != 'lstat'
-              stat_method = :lstat # Handle recursive symlinks
-              retry
-            end
-          end
-
-          # We need to escape any brackets in the directory name, unless already escaped.
-          temp = File.dirname(file).gsub(/(?<!\\)([\[\]])/, '\\\\\1')
-          glob = File.join(temp, @name)
-
-          # Dir[] doesn't like backslashes
-          if File::ALT_SEPARATOR
-            file.tr!(File::ALT_SEPARATOR, File::SEPARATOR)
-            glob.tr!(File::ALT_SEPARATOR, File::SEPARATOR)
-          end
-
-          if @mount && stat_info.dev != @filesystem
-            next
-          end
-
-          if @links && stat_info.nlink != @links
-            next
-          end
-
-          if @maxdepth || @mindepth
-            file_depth = file.split(File::SEPARATOR).reject(&:empty?).length
-            current_base_path = [@path].flatten.find{ |tpath| file.include?(tpath) }
-            path_depth = current_base_path.split(File::SEPARATOR).length
-
-            depth = file_depth - path_depth
-
-            if @maxdepth && (depth > @maxdepth)
-              if File.directory?(file) && !(paths.include?(file) && depth > @maxdepth)
-                paths << file
-              end
+            if prune_regex && prune_regex.match(file)
               next
             end
 
-            if @mindepth && (depth < @mindepth)
-              if File.directory?(file) && !(paths.include?(file) && depth < @mindepth)
-                paths << file
+            file = File.join(path, file)
+
+            stat_method = @follow ? :stat : :lstat
+            # Skip files we cannot access, stale links, etc.
+            begin
+              stat_info = File.send(stat_method, file)
+            rescue Errno::ENOENT, Errno::EACCES
+              next
+            rescue Errno::ELOOP
+              if stat_method.to_s != 'lstat'
+                stat_method = :lstat # Handle recursive symlinks
+                retry
               end
+            end
+
+            # We need to escape any brackets in the directory name, unless already escaped.
+            temp = File.dirname(file).gsub(/(?<!\\)([\[\]])/, '\\\\\1')
+            glob = File.join(temp, @name)
+
+            # Dir[] doesn't like backslashes
+            if File::ALT_SEPARATOR
+              file.tr!(File::ALT_SEPARATOR, File::SEPARATOR)
+              glob.tr!(File::ALT_SEPARATOR, File::SEPARATOR)
+            end
+
+            if @mount && stat_info.dev != @filesystem
               next
             end
-          end
 
-          # Add directories back onto the list of paths to search unless
-          # they've already been added
-          #
-          if stat_info.directory? && !paths.include?(file)
-            paths << file
-          end
+            if @links && stat_info.nlink != @links
+              next
+            end
 
-          next unless Dir[glob].include?(file)
+            if @maxdepth || @mindepth
+              file_depth = file.split(File::SEPARATOR).reject(&:empty?).length
+              current_base_path = [@path].flatten.find{ |tpath| file.include?(tpath) }
+              path_depth = current_base_path.split(File::SEPARATOR).length
 
-          unless @filetest.empty?
-            file_test = true
+              depth = file_depth - path_depth
 
-            @filetest.each do |array|
-              meth = array[0]
-              bool = array[1]
+              if @maxdepth && (depth > @maxdepth)
+                if File.directory?(file) && !(paths.include?(file) && depth > @maxdepth)
+                  paths << file
+                end
+                next
+              end
 
-              unless File.send(meth, file) == bool
-                file_test = false
-                break
+              if @mindepth && (depth < @mindepth)
+                if File.directory?(file) && !(paths.include?(file) && depth < @mindepth)
+                  paths << file
+                end
+                next
               end
             end
 
-            next unless file_test
-          end
-
-          if @atime || @ctime || @mtime
-            date1 = Date.parse(Time.now.to_s)
-
-            if @atime
-              date2 = Date.parse(stat_info.atime.to_s)
-              next unless (date1 - date2).numerator == @atime
+            # Add directories back onto the list of paths to search unless
+            # they've already been added
+            #
+            if stat_info.directory? && !paths.include?(file)
+              paths << file
             end
 
-            if @ctime
-              date2 = Date.parse(stat_info.ctime.to_s)
-              next unless (date1 - date2).numerator == @ctime
+            next unless Dir[glob].include?(file)
+
+            unless @filetest.empty?
+              file_test = true
+
+              @filetest.each do |array|
+                meth = array[0]
+                bool = array[1]
+
+                unless File.send(meth, file) == bool
+                  file_test = false
+                  break
+                end
+              end
+
+              next unless file_test
             end
 
-            if @mtime
-              date2 = Date.parse(stat_info.mtime.to_s)
-              next unless (date1 - date2).numerator == @mtime
+            if @atime || @ctime || @mtime
+              date1 = Date.parse(Time.now.to_s)
+
+              if @atime
+                date2 = Date.parse(stat_info.atime.to_s)
+                next unless (date1 - date2).numerator == @atime
+              end
+
+              if @ctime
+                date2 = Date.parse(stat_info.ctime.to_s)
+                next unless (date1 - date2).numerator == @ctime
+              end
+
+              if @mtime
+                date2 = Date.parse(stat_info.mtime.to_s)
+                next unless (date1 - date2).numerator == @mtime
+              end
             end
-          end
 
-          if @ftype && File.ftype(file) != @ftype
-            next
-          end
+            if @ftype && File.ftype(file) != @ftype
+              next
+            end
 
-          if @group
-            if @group.is_a?(String)
-              if File::ALT_SEPARATOR
-                begin
-                  next unless Sys::Admin.get_group(stat_info.gid, :LocalAccount => true).name == @group
-                rescue Sys::Admin::Error
-                  next
+            if @group
+              if @group.is_a?(String)
+                if File::ALT_SEPARATOR
+                  begin
+                    next unless Sys::Admin.get_group(stat_info.gid, :LocalAccount => true).name == @group
+                  rescue Sys::Admin::Error
+                    next
+                  end
+                else
+                  begin
+                    next unless Sys::Admin.get_group(stat_info.gid).name == @group
+                  rescue Sys::Admin::Error
+                    next
+                  end
                 end
               else
-                begin
-                  next unless Sys::Admin.get_group(stat_info.gid).name == @group
-                rescue Sys::Admin::Error
-                  next
+                next unless stat_info.gid == @group
+              end
+            end
+
+            if @inum && stat_info.ino != @inum
+              next
+            end
+
+            # Note that only 0644 and 0444 are supported on MS Windows.
+            if @perm
+              if @perm.is_a?(String)
+                octal_perm = sym2oct(@perm)
+                next unless stat_info.mode & octal_perm == octal_perm
+              else
+                next unless format('%o', stat_info.mode & 07777) == format('%o', @perm)
+              end
+            end
+
+            # Allow plain numbers, or strings for comparison operators.
+            if @size
+              if @size.is_a?(String)
+                regex = /^([><=]+)\s*?(\d+)$/
+                match = regex.match(@size)
+
+                if match.nil? || match.captures.include?(nil)
+                  raise ArgumentError, "invalid size string: '#{@size}'"
                 end
+
+                operator = match.captures.first.strip
+                number   = match.captures.last.strip.to_i
+
+                next unless stat_info.size.send(operator, number)
+              else
+                next unless stat_info.size == @size
               end
-            else
-              next unless stat_info.gid == @group
             end
-          end
 
-          if @inum && stat_info.ino != @inum
-            next
-          end
-
-          # Note that only 0644 and 0444 are supported on MS Windows.
-          if @perm
-            if @perm.is_a?(String)
-              octal_perm = sym2oct(@perm)
-              next unless stat_info.mode & octal_perm == octal_perm
-            else
-              next unless format('%o', stat_info.mode & 07777) == format('%o', @perm)
-            end
-          end
-
-          # Allow plain numbers, or strings for comparison operators.
-          if @size
-            if @size.is_a?(String)
-              regex = /^([><=]+)\s*?(\d+)$/
-              match = regex.match(@size)
-
-              if match.nil? || match.captures.include?(nil)
-                raise ArgumentError, "invalid size string: '#{@size}'"
-              end
-
-              operator = match.captures.first.strip
-              number   = match.captures.last.strip.to_i
-
-              next unless stat_info.size.send(operator, number)
-            else
-              next unless stat_info.size == @size
-            end
-          end
-
-          if @user
-            if @user.is_a?(String)
-              if File::ALT_SEPARATOR
-                begin
-                  next unless Sys::Admin.get_user(stat_info.uid, :LocalAccount => true).name == @user
-                rescue Sys::Admin::Error
-                  next
+            if @user
+              if @user.is_a?(String)
+                if File::ALT_SEPARATOR
+                  begin
+                    next unless Sys::Admin.get_user(stat_info.uid, :LocalAccount => true).name == @user
+                  rescue Sys::Admin::Error
+                    next
+                  end
+                else
+                  begin
+                    next unless Sys::Admin.get_user(stat_info.uid).name == @user
+                  rescue Sys::Admin::Error
+                    next
+                  end
                 end
               else
-                begin
-                  next unless Sys::Admin.get_user(stat_info.uid).name == @user
-                rescue Sys::Admin::Error
-                  next
-                end
+                next unless stat_info.uid == @user
               end
-            else
-              next unless stat_info.uid == @user
             end
-          end
 
-          if block_given?
-            yield file
-          else
-            results << file
-          end
+            if block_given?
+              yield file
+            else
+              results << file
+            end
 
-          @previous = file unless @previous == file
+            @previous = file unless @previous == file
+          end
+        rescue Errno::EACCES
+          next # Skip inaccessible directories
         end
-      rescue Errno::EACCES
-        next # Skip inaccessible directories
       end
+      threads.map(&:join)
     end
     # rubocop:enable Metrics/BlockLength
 
