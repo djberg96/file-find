@@ -213,6 +213,7 @@ class File::Find
   def find
     results = [] unless block_given?
     paths   = @path.is_a?(String) ? [@path] : @path # Ruby 1.9.x compatibility
+    queue   = paths.dup
 
     if @prune
       prune_regex = Regexp.new(@prune)
@@ -221,7 +222,8 @@ class File::Find
     end
 
     # rubocop:disable Metrics/BlockLength
-    paths.each do |path|
+    until queue.empty?
+      path = queue.shift
       begin
         Dir.foreach(path) do |file|
           next if file == '.'
@@ -273,14 +275,14 @@ class File::Find
 
             if @maxdepth && (depth > @maxdepth)
               if File.directory?(file) && !(paths.include?(file) && depth > @maxdepth)
-                paths << file
+                queue << file
               end
               next
             end
 
             if @mindepth && (depth < @mindepth)
               if File.directory?(file) && !(paths.include?(file) && depth < @mindepth)
-                paths << file
+                queue << file
               end
               next
             end
@@ -290,7 +292,7 @@ class File::Find
           # they've already been added
           #
           if stat_info.directory? && !paths.include?(file)
-            paths << file
+            queue << file
           end
 
           next unless Dir[glob].include?(file)
