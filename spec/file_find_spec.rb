@@ -16,6 +16,7 @@ RSpec.describe File::Find do
   include FakeFS::SpecHelpers
 
   let(:windows)    { File::ALT_SEPARATOR }
+  let(:elevated)   { windows and Win32::Security.elevated_security? }
   let(:ruby_file)  { 'file_find_test.rb' }
   let(:doc_file)   { 'file_find_test.doc' }
 
@@ -24,7 +25,7 @@ RSpec.describe File::Find do
 
   before(:all) do
     @loguser = Sys::Admin.get_user(Sys::Admin.get_login)
-    @logroup = Sys::Admin.get_group(@loguser.gid)
+    @logroup = Sys::Admin.get_group('Users')
   end
 
   context 'constants', :constants do
