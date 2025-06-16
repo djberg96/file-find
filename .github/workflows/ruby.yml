@@ -30,7 +30,5 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby-version }}
         bundler-cache: true
-        if: matrix.platform == 'windows-latest'
-        run: gem install win32-security
     - name: Run tests
       run: bundle exec rake
