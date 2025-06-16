@@ -10,6 +10,7 @@ require 'rspec'
 require 'file-find'
 require 'sys-admin'
 require 'tmpdir'
+require 'pp' # Goofy workaround for FakeFS bug
 require 'fakefs/spec_helpers'
 
 RSpec.describe File::Find do
@@ -267,7 +268,7 @@ RSpec.describe File::Find do
     end
 
     example 'links method returns expected result' do
-      # skip if @@windows && !@@elevated # TODO: Update
+      skip if windows && !elevated
 
       rule1 = described_class.new(:name => '*.rb', :links => 2)
       rule2 = described_class.new(:name => '*.doc', :links => 1)
