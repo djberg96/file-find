@@ -325,14 +325,17 @@ RSpec.describe File::Find do
       expect(rule.maxdepth).to be_nil
     end
 
-    example 'find with maxdepth option returns expected results' do
+    example 'find with maxdepth 1 returns expected results' do
       rule.maxdepth = 1
-
       expect(rule.find).to eq([])
+    end
 
+    example 'find with maxdepth 2 returns expected results' do
       rule.maxdepth = 2
       expect(rule.find.map{ |e| File.basename(e) }).to eq(['a.foo'])
+    end
 
+    example 'find with maxdepth 3 returns expected results' do
       rule.maxdepth = 3
       expect(rule.find.map{ |e| File.basename(e) }).to contain_exactly('a.foo', 'b.foo', 'c.foo')
     end
@@ -343,15 +346,20 @@ RSpec.describe File::Find do
       expect(rule.find.map{ |e| File.basename(e) }).to match_array(results)
     end
 
-    example 'find with maxdepth option returns expected results for directories' do
+    example 'find with maxdepth 1 returns expected results for directories' do
       rule.pattern = 'a3'
-
       rule.maxdepth = 1
       expect(rule.find).to eq([])
+    end
 
+    example 'find with maxdepth 2 returns expected results for directories' do
+      rule.pattern = 'a3'
       rule.maxdepth = 2
       expect(rule.find).to eq([])
+    end
 
+    example 'find with maxdepth 3 returns expected results for directories' do
+      rule.pattern = 'a3'
       rule.maxdepth = 3
       expect(rule.find.map{ |e| File.basename(e) }).to eq(['a3'])
     end
