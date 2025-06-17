@@ -26,7 +26,8 @@ RSpec.describe File::Find do
 
   before(:all) do
     @loguser = Sys::Admin.get_user(Sys::Admin.get_login)
-    @logroup = Sys::Admin.get_group('Users')
+    group = File::ALT_SEPARATOR ? 'Users' : @loguser.gid
+    @logroup = Sys::Admin.get_group(group)
   end
 
   context 'constants', :constants do
