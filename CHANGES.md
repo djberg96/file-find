@@ -1,3 +1,11 @@
+## 0.5.1 - 17-Jun-2025
+* Updated, fixed or skipped some specs on Windows.
+* Some rubocop cleanup and minor refactors.
+* Added a github workflow matrix to the repo.
+* Added a rubocop config to the repo.
+* Minor tweaks to the Rakefile.
+* Added more information to the README.
+
 ## 0.5.0 - 19-Jan-2021
 * Switched from test-unit to rspec, with an added development
   dependency on the fakefs gem.
