@@ -111,7 +111,7 @@ class File::Find
   attr_accessor :mtime
 
   # The name pattern used to limit file searches. The patterns that are legal
-  # for Dir.glob are legal here. The default is '*', i.e. everything.
+  # for File.fnmatch are legal here. The default is '*', i.e. everything.
   #
   attr_accessor :name
 
@@ -248,16 +248,6 @@ class File::Find
             end
           end
 
-          # We need to escape any brackets in the directory name, unless already escaped.
-          temp = File.dirname(file).gsub(/(?<!\\)([\[\]])/, '\\\\\1')
-          glob = File.join(temp, @name)
-
-          # Dir[] doesn't like backslashes
-          if File::ALT_SEPARATOR
-            file.tr!(File::ALT_SEPARATOR, File::SEPARATOR)
-            glob.tr!(File::ALT_SEPARATOR, File::SEPARATOR)
-          end
-
           if @mount && stat_info.dev != @filesystem
             next
           end
@@ -295,7 +285,7 @@ class File::Find
             queue << file
           end
 
-          next unless Dir[glob].include?(file)
+          next unless File.fnmatch?(@name, File.basename(file))
 
           unless @filetest.empty?
             file_test = true
