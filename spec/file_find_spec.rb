@@ -10,6 +10,7 @@ require 'rspec'
 require 'file-find'
 require 'sys-admin'
 require 'sys-uname'
+require 'diff/lcs'
 require 'tmpdir'
 require 'pp' # Goofy workaround for FakeFS bug
 require 'fakefs/spec_helpers'

@@ -31,6 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency('rubocop')
   spec.add_development_dependency('rubocop-rspec')
   spec.add_development_dependency('sys-uname')
+  spec.add_development_dependency('diff-lcs')
 
   spec.description = <<-EOF
     The file-find library provides a better, more object oriented approach
