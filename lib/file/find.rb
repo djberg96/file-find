@@ -270,7 +270,7 @@ class File::Find
               next
             end
 
-            if @mindepth && (depth < @mindepth)
+            if @mindepth && depth < @mindepth
               if stat_info.directory? && !paths.include?(file)
                 queue << file
               end
