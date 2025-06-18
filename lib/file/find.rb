@@ -13,7 +13,7 @@ end
 # files on your filesystem.
 class File::Find
   # The version of the file-find library
-  VERSION = '0.5.0'
+  VERSION = '0.5.1'
 
   # :stopdoc:
   VALID_OPTIONS = %w[

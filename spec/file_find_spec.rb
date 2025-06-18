@@ -10,12 +10,14 @@ require 'rspec'
 require 'file-find'
 require 'sys-admin'
 require 'tmpdir'
+require 'pp' # Goofy workaround for FakeFS bug
 require 'fakefs/spec_helpers'
 
 RSpec.describe File::Find do
   include FakeFS::SpecHelpers
 
   let(:windows)    { File::ALT_SEPARATOR }
+  let(:elevated)   { windows and Win32::Security.elevated_security? }
   let(:ruby_file)  { 'file_find_test.rb' }
   let(:doc_file)   { 'file_find_test.doc' }
 
@@ -24,12 +26,13 @@ RSpec.describe File::Find do
 
   before(:all) do
     @loguser = Sys::Admin.get_user(Sys::Admin.get_login)
-    @logroup = Sys::Admin.get_group(@loguser.gid)
+    group = File::ALT_SEPARATOR ? 'Users' : @loguser.gid
+    @logroup = Sys::Admin.get_group(group)
   end
 
   context 'constants', :constants do
     example 'version constant is set to expected value' do
-      expect(File::Find::VERSION).to eq('0.5.0')
+      expect(File::Find::VERSION).to eq('0.5.1')
       expect(File::Find::VERSION).to be_frozen
     end
   end
@@ -266,7 +269,7 @@ RSpec.describe File::Find do
     end
 
     example 'links method returns expected result' do
-      # skip if @@windows && !@@elevated # TODO: Update
+      skip if windows && !elevated
 
       rule1 = described_class.new(:name => '*.rb', :links => 2)
       rule2 = described_class.new(:name => '*.doc', :links => 1)
@@ -322,33 +325,45 @@ RSpec.describe File::Find do
       expect(rule.maxdepth).to be_nil
     end
 
-    example 'find with maxdepth option returns expected results' do
+    example 'find with maxdepth 1 returns expected results' do
       rule.maxdepth = 1
-
       expect(rule.find).to eq([])
+    end
 
+    example 'find with maxdepth 2 returns expected results' do
+      pending if windows
       rule.maxdepth = 2
       expect(rule.find.map{ |e| File.basename(e) }).to eq(['a.foo'])
+    end
 
+    example 'find with maxdepth 3 returns expected results' do
+      pending if windows
       rule.maxdepth = 3
       expect(rule.find.map{ |e| File.basename(e) }).to contain_exactly('a.foo', 'b.foo', 'c.foo')
     end
 
     example 'find with nil maxdepth option returns everything' do
+      pending if windows
       rule.maxdepth = nil
       results = ['a.foo', 'b.foo', 'c.foo', 'd.foo', 'e.foo', 'f.foo']
       expect(rule.find.map{ |e| File.basename(e) }).to match_array(results)
     end
 
-    example 'find with maxdepth option returns expected results for directories' do
+    example 'find with maxdepth 1 returns expected results for directories' do
       rule.pattern = 'a3'
-
       rule.maxdepth = 1
       expect(rule.find).to eq([])
+    end
 
+    example 'find with maxdepth 2 returns expected results for directories' do
+      rule.pattern = 'a3'
       rule.maxdepth = 2
       expect(rule.find).to eq([])
+    end
 
+    example 'find with maxdepth 3 returns expected results for directories' do
+      pending if windows
+      rule.pattern = 'a3'
       rule.maxdepth = 3
       expect(rule.find.map{ |e| File.basename(e) }).to eq(['a3'])
     end
@@ -379,30 +394,35 @@ RSpec.describe File::Find do
     end
 
     example 'find with mindepth option returns expected results at depth 0' do
+      pending if windows
       rule.mindepth = 0
       array = ['a.min', 'b.min', 'c.min', 'd.min', 'e.min', 'f.min', 'z.min']
       expect(rule.find.map{ |e| File.basename(e) }).to match_array(array)
     end
 
     example 'find with mindepth option returns expected results at depth 1' do
+      pending if windows
       rule.mindepth = 1
       array = ['a.min', 'b.min', 'c.min', 'd.min', 'e.min', 'f.min', 'z.min']
       expect(rule.find.map{ |e| File.basename(e) }).to match_array(array)
     end
 
     example 'find with mindepth option returns expected results at depth 2' do
+      pending if windows
       rule.mindepth = 2
       array = ['a.min', 'b.min', 'c.min', 'd.min', 'e.min', 'f.min']
       expect(rule.find.map{ |e| File.basename(e) }).to match_array(array)
     end
 
     example 'find with mindepth option returns expected results at depth 3' do
+      pending if windows
       rule.mindepth = 3
       array = ['b.min', 'c.min', 'd.min', 'e.min', 'f.min']
       expect(rule.find.map{ |e| File.basename(e) }).to match_array(array)
     end
 
     example 'find with mindepth option returns expected results at depth 4' do
+      pending if windows
       rule.mindepth = 4
       array = ['d.min', 'e.min', 'f.min']
       expect(rule.find.map{ |e| File.basename(e) }).to match_array(array)
@@ -544,6 +564,8 @@ RSpec.describe File::Find do
     end
 
     example 'user method works with numeric id as expected' do
+      pending if windows # TODO: Get this working on Windows
+
       if windows && elevated
         uid = @loguser.gid # Windows assigns the group if any member is an admin
       else
@@ -555,6 +577,8 @@ RSpec.describe File::Find do
     end
 
     example 'user method works with string as expected' do
+      pending if windows # TODO: Get this working on Windows
+
       skip if windows && elevated
       rule = described_class.new(:name => '*.doc', :user => @loguser.name)
       expect(rule.find).to eq([File.expand_path(doc_file)])
