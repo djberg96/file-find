@@ -292,22 +292,10 @@ class File::Find
           end
 
           if @atime || @ctime || @mtime
-            date1 = Date.parse(Time.now.to_s)
-
-            if @atime
-              date2 = Date.parse(stat_info.atime.to_s)
-              next unless (date1 - date2).numerator == @atime
-            end
-
-            if @ctime
-              date2 = Date.parse(stat_info.ctime.to_s)
-              next unless (date1 - date2).numerator == @ctime
-            end
-
-            if @mtime
-              date2 = Date.parse(stat_info.mtime.to_s)
-              next unless (date1 - date2).numerator == @mtime
-            end
+            now = Date.today
+            next if @atime && (now - Date.parse(stat_info.atime.to_s)).to_i != @atime
+            next if @ctime && (now - Date.parse(stat_info.ctime.to_s)).to_i != @ctime
+            next if @mtime && (now - Date.parse(stat_info.mtime.to_s)).to_i != @mtime
           end
 
           if @ftype && File.ftype(file) != @ftype
