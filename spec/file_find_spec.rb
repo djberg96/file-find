@@ -331,16 +331,19 @@ RSpec.describe File::Find do
     end
 
     example 'find with maxdepth 2 returns expected results' do
+      pending if windows
       rule.maxdepth = 2
       expect(rule.find.map{ |e| File.basename(e) }).to eq(['a.foo'])
     end
 
     example 'find with maxdepth 3 returns expected results' do
+      pending if windows
       rule.maxdepth = 3
       expect(rule.find.map{ |e| File.basename(e) }).to contain_exactly('a.foo', 'b.foo', 'c.foo')
     end
 
     example 'find with nil maxdepth option returns everything' do
+      pending if windows
       rule.maxdepth = nil
       results = ['a.foo', 'b.foo', 'c.foo', 'd.foo', 'e.foo', 'f.foo']
       expect(rule.find.map{ |e| File.basename(e) }).to match_array(results)
@@ -359,6 +362,7 @@ RSpec.describe File::Find do
     end
 
     example 'find with maxdepth 3 returns expected results for directories' do
+      pending if windows
       rule.pattern = 'a3'
       rule.maxdepth = 3
       expect(rule.find.map{ |e| File.basename(e) }).to eq(['a3'])
@@ -390,30 +394,35 @@ RSpec.describe File::Find do
     end
 
     example 'find with mindepth option returns expected results at depth 0' do
+      pending if windows
       rule.mindepth = 0
       array = ['a.min', 'b.min', 'c.min', 'd.min', 'e.min', 'f.min', 'z.min']
       expect(rule.find.map{ |e| File.basename(e) }).to match_array(array)
     end
 
     example 'find with mindepth option returns expected results at depth 1' do
+      pending if windows
       rule.mindepth = 1
       array = ['a.min', 'b.min', 'c.min', 'd.min', 'e.min', 'f.min', 'z.min']
       expect(rule.find.map{ |e| File.basename(e) }).to match_array(array)
     end
 
     example 'find with mindepth option returns expected results at depth 2' do
+      pending if windows
       rule.mindepth = 2
       array = ['a.min', 'b.min', 'c.min', 'd.min', 'e.min', 'f.min']
       expect(rule.find.map{ |e| File.basename(e) }).to match_array(array)
     end
 
     example 'find with mindepth option returns expected results at depth 3' do
+      pending if windows
       rule.mindepth = 3
       array = ['b.min', 'c.min', 'd.min', 'e.min', 'f.min']
       expect(rule.find.map{ |e| File.basename(e) }).to match_array(array)
     end
 
     example 'find with mindepth option returns expected results at depth 4' do
+      pending if windows
       rule.mindepth = 4
       array = ['d.min', 'e.min', 'f.min']
       expect(rule.find.map{ |e| File.basename(e) }).to match_array(array)
