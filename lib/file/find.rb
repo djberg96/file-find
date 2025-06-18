@@ -212,145 +212,86 @@ class File::Find
   #
   def find
     results = [] unless block_given?
-    paths   = @path.is_a?(String) ? [@path] : @path # Ruby 1.9.x compatibility
+    paths   = Array(@path)
     queue   = paths.dup
 
-    if @prune
-      prune_regex = Regexp.new(@prune)
-    else
-      prune_regex = nil
-    end
+    prune_regex = @prune ? Regexp.new(@prune) : nil
 
-    # rubocop:disable Metrics/BlockLength
     until queue.empty?
       path = queue.shift
       begin
         Dir.foreach(path) do |file|
-          next if file == '.'
-          next if file == '..'
+          next if ['.', '..'].include?(file)
+          next if prune_regex && prune_regex.match(file)
 
-          if prune_regex && prune_regex.match(file)
-            next
-          end
-
-          file = File.join(path, file)
-
+          file_path = File.join(path, file)
           stat_method = @follow ? :stat : :lstat
-          # Skip files we cannot access, stale links, etc.
+
           begin
-            stat_info = File.send(stat_method, file)
+            stat_info = File.send(stat_method, file_path)
           rescue Errno::ENOENT, Errno::EACCES
             next
           rescue Errno::ELOOP
-            if stat_method.to_s != 'lstat'
-              stat_method = :lstat # Handle recursive symlinks
-              retry
-            end
+            stat_method = :lstat
+            retry
           end
 
-          if @mount && stat_info.dev != @filesystem
-            next
-          end
-
-          if @links && stat_info.nlink != @links
-            next
-          end
+          next if @mount && stat_info.dev != @filesystem
+          next if @links && stat_info.nlink != @links
 
           if @maxdepth || @mindepth
-            file_depth = file.split(File::SEPARATOR).reject(&:empty?).length
-            current_base_path = [@path].flatten.find{ |tpath| file.include?(tpath) }
-            path_depth = current_base_path.split(File::SEPARATOR).length
-
+            file_depth = file_path.split(File::SEPARATOR).reject(&:empty?).size
+            base_path = paths.find { |tpath| file_path.start_with?(tpath) } || paths.first
+            path_depth = base_path.split(File::SEPARATOR).reject(&:empty?).size
             depth = file_depth - path_depth
 
-            if @maxdepth && (depth > @maxdepth)
-              if File.directory?(file) && !(paths.include?(file) && depth > @maxdepth)
-                queue << file
-              end
+            if @maxdepth && depth > @maxdepth
+              queue << file_path if stat_info.directory? && !paths.include?(file_path)
               next
             end
 
-            if @mindepth && (depth < @mindepth)
-              if File.directory?(file) && !(paths.include?(file) && depth < @mindepth)
-                queue << file
-              end
+            if @mindepth && depth < @mindepth
+              queue << file_path if stat_info.directory? && !paths.include?(file_path)
               next
             end
           end
 
-          # Add directories back onto the list of paths to search unless
-          # they've already been added
-          #
-          if stat_info.directory? && !paths.include?(file)
-            queue << file
-          end
+          queue << file_path if stat_info.directory? && !paths.include?(file_path)
+          next unless File.fnmatch?(@name, File.basename(file_path))
 
-          next unless File.fnmatch?(@name, File.basename(file))
-
-          unless @filetest.empty?
-            file_test = true
-
-            @filetest.each do |array|
-              meth = array[0]
-              bool = array[1]
-
-              unless File.send(meth, file) == bool
-                file_test = false
-                break
-              end
-            end
-
-            next unless file_test
+          if !@filetest.empty? && !@filetest.all? { |meth, bool| File.send(meth, file_path) == bool }
+            next
           end
 
           if @atime || @ctime || @mtime
-            date1 = Date.parse(Time.now.to_s)
-
-            if @atime
-              date2 = Date.parse(stat_info.atime.to_s)
-              next unless (date1 - date2).numerator == @atime
-            end
-
-            if @ctime
-              date2 = Date.parse(stat_info.ctime.to_s)
-              next unless (date1 - date2).numerator == @ctime
-            end
-
-            if @mtime
-              date2 = Date.parse(stat_info.mtime.to_s)
-              next unless (date1 - date2).numerator == @mtime
-            end
+            now = Date.today
+            next if @atime && (now - Date.parse(stat_info.atime.to_s)).to_i != @atime
+            next if @ctime && (now - Date.parse(stat_info.ctime.to_s)).to_i != @ctime
+            next if @mtime && (now - Date.parse(stat_info.mtime.to_s)).to_i != @mtime
           end
 
-          if @ftype && File.ftype(file) != @ftype
-            next
-          end
+          next if @ftype && File.ftype(file_path) != @ftype
 
           if @group
-            if @group.is_a?(String)
-              if File::ALT_SEPARATOR
-                begin
-                  next unless Sys::Admin.get_group(stat_info.gid, :LocalAccount => true).name == @group
-                rescue Sys::Admin::Error
-                  next
-                end
-              else
-                begin
-                  next unless Sys::Admin.get_group(stat_info.gid).name == @group
-                rescue Sys::Admin::Error
-                  next
-                end
-              end
-            else
-              next unless stat_info.gid == @group
-            end
+            group_match = if @group.is_a?(String)
+                            begin
+                              group_obj = if File::ALT_SEPARATOR
+                                            Sys::Admin.get_group(stat_info.gid, :LocalAccount => true)
+                                          else
+                                            Sys::Admin.get_group(stat_info.gid)
+                                          end
+                              group_obj.name == @group
+                            rescue Sys::Admin::Error
+                              false
+                            end
+                          else
+                            stat_info.gid == @group
+                          end
+            next unless group_match
           end
 
-          if @inum && stat_info.ino != @inum
-            next
-          end
+          next if @inum && stat_info.ino != @inum
 
-          # Note that only 0644 and 0444 are supported on MS Windows.
           if @perm
             if @perm.is_a?(String)
               octal_perm = sym2oct(@perm)
@@ -360,58 +301,48 @@ class File::Find
             end
           end
 
-          # Allow plain numbers, or strings for comparison operators.
           if @size
             if @size.is_a?(String)
-              regex = /^([><=]+)\s*?(\d+)$/
-              match = regex.match(@size)
-
-              if match.nil? || match.captures.include?(nil)
-                raise ArgumentError, "invalid size string: '#{@size}'"
-              end
-
-              operator = match.captures.first.strip
-              number   = match.captures.last.strip.to_i
-
+              raise ArgumentError, "invalid size string: '#{@size}'" unless @size =~ /^([><=]+)\s*(\d+)$/
+              operator = ::Regexp.last_match(1)
+              number = ::Regexp.last_match(2).to_i
               next unless stat_info.size.send(operator, number)
+
             else
               next unless stat_info.size == @size
             end
           end
 
           if @user
-            if @user.is_a?(String)
-              if File::ALT_SEPARATOR
-                begin
-                  next unless Sys::Admin.get_user(stat_info.uid, :LocalAccount => true).name == @user
-                rescue Sys::Admin::Error
-                  next
-                end
-              else
-                begin
-                  next unless Sys::Admin.get_user(stat_info.uid).name == @user
-                rescue Sys::Admin::Error
-                  next
-                end
-              end
-            else
-              next unless stat_info.uid == @user
-            end
+            user_match = if @user.is_a?(String)
+                           begin
+                             user_obj = if File::ALT_SEPARATOR
+                                          Sys::Admin.get_user(stat_info.uid, :LocalAccount => true)
+                                        else
+                                          Sys::Admin.get_user(stat_info.uid)
+                                        end
+                             user_obj.name == @user
+                           rescue Sys::Admin::Error
+                             false
+                           end
+                         else
+                           stat_info.uid == @user
+                         end
+            next unless user_match
           end
 
           if block_given?
-            yield file
+            yield file_path
           else
-            results << file
+            results << file_path
           end
 
-          @previous = file unless @previous == file
+          @previous = file_path unless @previous == file_path
         end
       rescue Errno::EACCES
-        next # Skip inaccessible directories
+        next
       end
     end
-    # rubocop:enable Metrics/BlockLength
 
     block_given? ? nil : results
   end
