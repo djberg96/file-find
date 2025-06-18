@@ -287,20 +287,8 @@ class File::Find
 
           next unless File.fnmatch?(@name, File.basename(file))
 
-          unless @filetest.empty?
-            file_test = true
-
-            @filetest.each do |array|
-              meth = array[0]
-              bool = array[1]
-
-              unless File.send(meth, file) == bool
-                file_test = false
-                break
-              end
-            end
-
-            next unless file_test
+          if !@filetest.empty? && !@filetest.all? { |meth, bool| File.send(meth, file) == bool }
+            next
           end
 
           if @atime || @ctime || @mtime
