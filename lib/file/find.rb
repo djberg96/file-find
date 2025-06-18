@@ -263,15 +263,15 @@ class File::Find
 
             depth = file_depth - path_depth
 
-            if @maxdepth && (depth > @maxdepth)
-              if File.directory?(file) && !(paths.include?(file) && depth > @maxdepth)
+            if @maxdepth && depth > @maxdepth
+              if stat_info.directory? && !paths.include?(file)
                 queue << file
               end
               next
             end
 
             if @mindepth && (depth < @mindepth)
-              if File.directory?(file) && !(paths.include?(file) && depth < @mindepth)
+              if stat_info.directory? && !paths.include?(file)
                 queue << file
               end
               next
