@@ -92,6 +92,9 @@ The `:perm` option is limited to 0644 and 0444 on MS Windows.
 The `:user`, `:group`, and `:inum` options require the win32-file gem to work
 properly on MS Windows. However, win32-file is not officially a dependency.
 
+Some specs on Windows are marked pending for now because there's some issue
+interacting with the FakeFS gem on Windows.
+
 ## Bugs
 
 None that I'm aware of beyond the ones mentioned in the Known Issues. Please
@@ -112,7 +115,7 @@ Apache-2.0
 
 ## Copyright
 
-(C) 2007-2021, Daniel J. Berger, All Rights Reserved
+(C) 2007-2025, Daniel J. Berger, All Rights Reserved
 
 ## Author
 
