@@ -13,7 +13,7 @@ end
 # files on your filesystem.
 class File::Find
   # The version of the file-find library
-  VERSION = '0.5.1'
+  VERSION = '0.5.2'
 
   # :stopdoc:
   VALID_OPTIONS = %w[
@@ -212,7 +212,7 @@ class File::Find
   #
   def find
     results = [] unless block_given?
-    paths   = @path.is_a?(String) ? [@path] : @path # Ruby 1.9.x compatibility
+    paths   = Array(@path)
     queue   = paths.dup
 
     if @prune
