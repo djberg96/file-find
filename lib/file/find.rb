@@ -13,7 +13,7 @@ end
 # files on your filesystem.
 class File::Find
   # The version of the file-find library
-  VERSION = '0.5.1'
+  VERSION = '0.5.2'
 
   # :stopdoc:
   VALID_OPTIONS = %w[
@@ -212,7 +212,7 @@ class File::Find
   #
   def find
     results = [] unless block_given?
-    paths   = @path.is_a?(String) ? [@path] : @path # Ruby 1.9.x compatibility
+    paths   = Array(@path)
     queue   = paths.dup
 
     if @prune
@@ -263,15 +263,15 @@ class File::Find
 
             depth = file_depth - path_depth
 
-            if @maxdepth && (depth > @maxdepth)
-              if File.directory?(file) && !(paths.include?(file) && depth > @maxdepth)
+            if @maxdepth && depth > @maxdepth
+              if stat_info.directory? && !paths.include?(file)
                 queue << file
               end
               next
             end
 
-            if @mindepth && (depth < @mindepth)
-              if File.directory?(file) && !(paths.include?(file) && depth < @mindepth)
+            if @mindepth && depth < @mindepth
+              if stat_info.directory? && !paths.include?(file)
                 queue << file
               end
               next
@@ -287,39 +287,15 @@ class File::Find
 
           next unless File.fnmatch?(@name, File.basename(file))
 
-          unless @filetest.empty?
-            file_test = true
-
-            @filetest.each do |array|
-              meth = array[0]
-              bool = array[1]
-
-              unless File.send(meth, file) == bool
-                file_test = false
-                break
-              end
-            end
-
-            next unless file_test
+          if !@filetest.empty? && !@filetest.all? { |meth, bool| File.send(meth, file) == bool }
+            next
           end
 
           if @atime || @ctime || @mtime
-            date1 = Date.parse(Time.now.to_s)
-
-            if @atime
-              date2 = Date.parse(stat_info.atime.to_s)
-              next unless (date1 - date2).numerator == @atime
-            end
-
-            if @ctime
-              date2 = Date.parse(stat_info.ctime.to_s)
-              next unless (date1 - date2).numerator == @ctime
-            end
-
-            if @mtime
-              date2 = Date.parse(stat_info.mtime.to_s)
-              next unless (date1 - date2).numerator == @mtime
-            end
+            now = Date.today
+            next if @atime && (now - Date.parse(stat_info.atime.to_s)).to_i != @atime
+            next if @ctime && (now - Date.parse(stat_info.ctime.to_s)).to_i != @ctime
+            next if @mtime && (now - Date.parse(stat_info.mtime.to_s)).to_i != @mtime
           end
 
           if @ftype && File.ftype(file) != @ftype
