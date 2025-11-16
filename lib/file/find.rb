@@ -236,6 +236,7 @@ class File::Find
           file = File.join(path, file)
 
           stat_method = @follow ? :stat : :lstat
+
           # Skip files we cannot access, stale links, etc.
           begin
             stat_info = File.send(stat_method, file)
@@ -248,13 +249,8 @@ class File::Find
             end
           end
 
-          if @mount && stat_info.dev != @filesystem
-            next
-          end
-
-          if @links && stat_info.nlink != @links
-            next
-          end
+          next if @mount && stat_info.dev != @filesystem
+          next if @links && stat_info.nlink != @links
 
           if @maxdepth || @mindepth
             file_depth = file.split(File::SEPARATOR).reject(&:empty?).length
@@ -298,9 +294,7 @@ class File::Find
             next if @mtime && (now - Date.parse(stat_info.mtime.to_s)).to_i != @mtime
           end
 
-          if @ftype && File.ftype(file) != @ftype
-            next
-          end
+          next if @ftype && stat_info.ftype != @ftype
 
           if @group
             if @group.is_a?(String)
