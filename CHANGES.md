@@ -1,3 +1,11 @@
+## 0.5.2 - 22-Nov-2025
+* Use fnmatch instead of some overworked checks for Windows paths using glob.
+* Minor refactoring improvements for atime/ctime/mtime checks.
+* Minor refactoring improvement for ftype check.
+* Minor refactoring improvement for filetest check.
+* Added MacOS and FreeBSD to the test matrix.
+* The specs now run in documentation mode by default.
+
 ## 0.5.1 - 17-Jun-2025
 * Updated, fixed or skipped some specs on Windows.
 * Some rubocop cleanup and minor refactors.
