@@ -289,9 +289,9 @@ class File::Find
 
           if @atime || @ctime || @mtime
             now = Date.today
-            next if @atime && (now - Date.parse(stat_info.atime.to_s)).to_i != @atime
-            next if @ctime && (now - Date.parse(stat_info.ctime.to_s)).to_i != @ctime
-            next if @mtime && (now - Date.parse(stat_info.mtime.to_s)).to_i != @mtime
+            next if @atime && (now - stat_info.atime.to_date).to_i != @atime
+            next if @ctime && (now - stat_info.ctime.to_date).to_i != @ctime
+            next if @mtime && (now - stat_info.mtime.to_date).to_i != @mtime
           end
 
           next if @ftype && stat_info.ftype != @ftype
