@@ -8,4 +8,4 @@
 * certs/djberg96_pub.pem
 * lib/file-find.rb
 * lib/file/find.rb
-* test/test_file_find.rb
+* spec/file_find_spec.rb
