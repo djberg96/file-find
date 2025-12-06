@@ -26,7 +26,7 @@ RuboCop::RakeTask.new
 
 RSpec::Core::RakeTask.new(:spec) do |t|
   t.pattern = ['spec/file_find_spec.rb']
-  t.rspec_opts = '-f documentation'
+  t.rspec_opts = '-f documentation -w'
 end
 
 # Clean up afterwards
