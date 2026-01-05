@@ -1,3 +1,9 @@
+## 0.5.3 - 4-Jan-2026
+* Internal refactoring, some performance improvements.
+* Dependency updates for Windows since Ruby 4+ no longer includes win32ole
+  in its stdlib. Use the gem instead.
+* Some specs restored for Windows, and specs run with warnings enabled by default.
+
 ## 0.5.2 - 22-Nov-2025
 * Use fnmatch instead of some overworked checks for Windows paths using glob.
 * Minor refactoring improvements for atime/ctime/mtime checks.

@@ -115,7 +115,7 @@ Apache-2.0
 
 ## Copyright
 
-(C) 2007-2025, Daniel J. Berger, All Rights Reserved
+(C) 2007-2026, Daniel J. Berger, All Rights Reserved
 
 ## Author
 

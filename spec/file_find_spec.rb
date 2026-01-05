@@ -34,7 +34,7 @@ RSpec.describe File::Find do
 
   context 'constants', :constants do
     example 'version constant is set to expected value' do
-      expect(File::Find::VERSION).to eq('0.5.2')
+      expect(File::Find::VERSION).to eq('0.5.3')
       expect(File::Find::VERSION).to be_frozen
     end
   end
