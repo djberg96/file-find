@@ -25,7 +25,11 @@ Gem::Specification.new do |spec|
   }
 
   spec.add_dependency('sys-admin', '~> 1.7')
-  spec.add_dependency('win32ole') if Gem.win_platform?
+
+  if Gem.win_platform?
+    spec.add_dependency('win32ole')
+    spec.add_dependency('win32-registry') # Until sys-admin gets updated properly
+  end
 
   spec.add_development_dependency('rspec', '~> 3.9')
   spec.add_development_dependency('fakefs', '~> 3.0')
