@@ -225,13 +225,15 @@ class File::Find
     until queue.empty?
       path = queue.shift
       begin
-        Dir.children(path).each do |file|
-          if prune_regex && prune_regex.match(file)
-            next
-          end
+        Dir.children(path).each do |basename|
+          # Fast rejections before expensive operations
+          next if prune_regex && prune_regex.match(basename)
 
-          file = File.join(path, file)
+          # Check name pattern early to potentially skip stat
+          # (but we still need to stat directories to add them to queue)
+          matches_name = File.fnmatch?(@name, basename)
 
+          file = File.join(path, basename)
           stat_method = @follow ? :stat : :lstat
 
           # Skip files we cannot access, stale links, etc.
@@ -245,6 +247,9 @@ class File::Find
               retry
             end
           end
+
+          # Skip non-directories that don't match name pattern early
+          next if !stat_info.directory? && !matches_name
 
           next if @mount && stat_info.dev != @filesystem
           next if @links && stat_info.nlink != @links
@@ -275,7 +280,9 @@ class File::Find
             next
           end
 
-          next unless File.fnmatch?(@name, File.basename(file))
+          # For directories, always traverse but only yield if name matches
+          # For regular files, we already checked name above
+          next if stat_info.directory? && !matches_name
 
           if !@filetest.empty? && !@filetest.all? { |meth, bool| File.send(meth, file) == bool }
             next
