@@ -249,33 +249,30 @@ class File::Find
           next if @mount && stat_info.dev != @filesystem
           next if @links && stat_info.nlink != @links
 
+          # Calculate depth early if needed for maxdepth/mindepth checks
           if @maxdepth || @mindepth
             file_depth = file.split(File::SEPARATOR).reject(&:empty?).length
             current_base_path = [@path].flatten.find{ |tpath| file.include?(tpath) }
             path_depth = current_base_path.split(File::SEPARATOR).length
-
             depth = file_depth - path_depth
+          end
 
-            if @maxdepth && depth > @maxdepth
-              if stat_info.directory? && !paths.include?(file)
-                queue << file
-              end
-              next
-            end
-
-            if @mindepth && depth < @mindepth
-              if stat_info.directory? && !paths.include?(file)
-                queue << file
-              end
-              next
+          # Early termination: don't even add directories to queue if beyond maxdepth
+          if stat_info.directory? && !paths.include?(file)
+            if @maxdepth && depth && depth >= @maxdepth
+              # At maxdepth, don't traverse into this directory
+            else
+              queue << file
             end
           end
 
-          # Add directories back onto the list of paths to search unless
-          # they've already been added
-          #
-          if stat_info.directory? && !paths.include?(file)
-            queue << file
+          # Skip files that are beyond maxdepth or before mindepth
+          if @maxdepth && depth && depth > @maxdepth
+            next
+          end
+
+          if @mindepth && depth && depth < @mindepth
+            next
           end
 
           next unless File.fnmatch?(@name, File.basename(file))
