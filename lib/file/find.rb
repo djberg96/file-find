@@ -225,10 +225,7 @@ class File::Find
     until queue.empty?
       path = queue.shift
       begin
-        Dir.foreach(path) do |file|
-          next if file == '.'
-          next if file == '..'
-
+        Dir.children(path).each do |file|
           if prune_regex && prune_regex.match(file)
             next
           end
