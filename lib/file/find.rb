@@ -242,7 +242,7 @@ class File::Find
           rescue Errno::ENOENT, Errno::EACCES
             next
           rescue Errno::ELOOP
-            if stat_method.to_s != 'lstat'
+            if stat_method != :lstat
               stat_method = :lstat # Handle recursive symlinks
               retry
             end
