@@ -27,9 +27,9 @@ RSpec.describe File::Find do
   let(:txt_rule) { described_class.new(:name => '*.txt') }
 
   before(:all) do
-    @loguser = Sys::Admin.get_user(Sys::Admin.get_login)
-    group = Sys::Platform.windows? ? 'Users' : @loguser.gid
-    @logroup = Sys::Admin.get_group(group)
+    if Sys::Platform.windows?
+      @loguser = Sys::Admin.get_user(Sys::Admin.get_login)
+    end
   end
 
   context 'constants', :constants do
@@ -213,7 +213,7 @@ RSpec.describe File::Find do
       skip 'group example skipped on MS Windows' if windows
       skip 'group example skipped on Mac in CI' if macos && ENV['CI']
 
-      rule = described_class.new(:name => '*.doc', :group => @loguser.gid)
+      rule = described_class.new(:name => '*.doc', :group => File.stat(doc_file).gid)
       expect(rule.find).to eq([File.expand_path(doc_file)])
     end
 
@@ -222,7 +222,8 @@ RSpec.describe File::Find do
       skip 'group example skipped on MS Windows' if windows
       skip 'group example skipped on Mac in CI' if macos && ENV['CI']
 
-      rule = described_class.new(:name => '*.doc', :group => @logroup.name)
+      group = Sys::Admin.get_group(File.stat(doc_file).gid)
+      rule = described_class.new(:name => '*.doc', :group => group.name)
       expect(rule.find).to eq([File.expand_path(doc_file)])
     end
 
@@ -563,11 +564,8 @@ RSpec.describe File::Find do
       pending if windows # TODO: Get this working on Windows
       skip 'user example skipped on Mac in CI' if macos && ENV['CI']
 
-      if windows && elevated
-        uid = @loguser.gid # Windows assigns the group if any member is an admin
-      else
-        uid = @loguser.uid
-      end
+      uid = windows ? @loguser.uid : File.stat(doc_file).uid
+      uid = @loguser.gid if windows && elevated # Windows assigns the group for admins
 
       rule = described_class.new(:name => '*.doc', :user => uid)
       expect(rule.find).to eq([File.expand_path(doc_file)])
@@ -577,7 +575,8 @@ RSpec.describe File::Find do
       skip 'user example skipped on Mac in CI' if macos && ENV['CI']
 
       skip if windows && elevated
-      rule = described_class.new(:name => '*.doc', :user => @loguser.name)
+      user = windows ? @loguser : Sys::Admin.get_user(File.stat(doc_file).uid)
+      rule = described_class.new(:name => '*.doc', :user => user.name)
       expect(rule.find).to eq([File.expand_path(doc_file)])
     end
 
